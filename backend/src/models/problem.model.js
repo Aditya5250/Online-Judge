@@ -1,29 +1,6 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
 
-const exampleSchema = new mongoose.Schema(
-    {
-        input:{
-            type:String,
-            required:true,
-            trim:true
-        },
-
-        output:{
-            type:String,
-            required:true,
-            trim:true
-        },
-
-        explanation:{
-            type:String,
-            trim:true,
-        },
-    },{
-        _id:false
-    }
-);
-
 
 const problemSchema = new mongoose.Schema({
     title:{
@@ -77,7 +54,6 @@ const problemSchema = new mongoose.Schema({
         },
     ],
 
-    examples:[exampleSchema],
 
     createdBy:{
         type:mongoose.Schema.Types.ObjectId,
