@@ -1,4 +1,5 @@
 import { createSubmissionService, getUserSubmissionService } from "../services/submission.service.js";
+import { judgeSubmission } from "../judge/judge.service.js";
 
 // Create Submission Controller
 
@@ -10,11 +11,12 @@ export const createSubmission = async (req, res) => { // it will handle creation
             userId,
             req.body
         );
+        const result=await judgeSubmission(submission._id); //called judgeSubmission to judge the submission
 
-        return res.status(201).json({
+        return res.status(201).json({ // final response
             success: true,
-            message: "Submission created successfully",
-            data: submission,
+            message: "Submission judged successfully",
+            data: result,
         });
     }
     catch (err) {
@@ -29,7 +31,7 @@ export const createSubmission = async (req, res) => { // it will handle creation
 
         return res.status(500).json({
             success: false,
-            message: err.message,
+            message: "Internal server error",
         });
     }
 
@@ -68,7 +70,7 @@ export const getMySubmissions= async(req,res)=>{ // will return all the submissi
 
         return res.status(500).json({
             success: false,
-            message: err.message,
+            message: "Internal server error",
         });
     }
 }

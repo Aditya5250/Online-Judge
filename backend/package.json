@@ -14,11 +14,16 @@
   "type": "module",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "child_process": "^1.0.2",
     "cors": "^2.8.6",
+    "crypto": "^1.0.1",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.2",
+    "os": "^0.1.2",
+    "path": "^0.12.7",
     "slugify": "^1.6.9"
   },
   "devDependencies": {

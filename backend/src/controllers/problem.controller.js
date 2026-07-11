@@ -4,10 +4,10 @@ import slugify from "slugify";
 export const createProblem = async (req, res) => {
     try {
 
-        const { title, problemStatement, difficulty, tags, examples } = req.body;
+        const { title, problemStatement, difficulty, tags } = req.body;
 
         //if any of the required fields are missing, return an error
-        if (!title || !problemStatement || !difficulty || !tags || !examples) {
+        if (!title || !problemStatement || !difficulty || !tags) {
             return res.status(400).json({
                 success: false,
                 message: "Please provide all required fields: title, problemStatement, difficulty, tags, examples",
@@ -40,7 +40,6 @@ export const createProblem = async (req, res) => {
             problemStatement,
             difficulty,
             tags,
-            examples,
             createdBy: req.user._id, //get the user id from the request object
         });
 
