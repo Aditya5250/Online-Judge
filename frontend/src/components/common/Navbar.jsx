@@ -19,7 +19,7 @@ function Navbar() {
 
 
 {/*--------------      Desktop Navigation       -----------------------------------------  */}
-                <div className="hidden xl:flex items-center gap-2">
+                <div className="hidden lg:flex items-center gap-2">
                     {NAV_ITEMS.map((item) => (
                         <NavLink
                             key={item.path}
@@ -44,7 +44,7 @@ function Navbar() {
 
                 </div>
                 {/* Desktop buttons */}
-                <div className="hidden xl:flex items-center gap-4">
+                <div className="hidden lg:flex items-center gap-4">
                     <button className="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)]" style={{ color: "var(--text-primary)" }}>
                         Login
                     </button>
@@ -54,7 +54,7 @@ function Navbar() {
                     </button>
                 </div>
 {/*-------------------- Mobile Navigation ---------------------*/}
-                <button onClick={() => setMenuOpen(true)} className="xl:hidden p-2 rounded-full transition-all hover:bg-[var(--bg-card)]" style={{ color: "var(--text-primary)" }}>
+                <button onClick={() => setMenuOpen(true)} className="lg:hidden p-2 rounded-full transition-all hover:bg-[var(--bg-card)]" style={{ color: "var(--text-primary)" }}>
                     <Menu size={24} />
                 </button>
             </nav>

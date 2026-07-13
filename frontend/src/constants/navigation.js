@@ -12,7 +12,7 @@ export const NAV_ITEMS =[
         path: "/dashboard",
     },
     {
-        name:"About",
-        path: "/about",
+        name:"Leaderboard",
+        path: "/Leaderboard",
     }
 ];
