@@ -129,8 +129,7 @@ export const compileInDocker=async({
         workingDirectory,
         command:compileCommand,
     });
-    console.log("Compile Exit Code", result.exitCode);
-    console.log("Compile stderr: ", result.stderr);
+
     
     if(!result.success){
         result.type=SUBMISSION_VERDICT.COMPILATION_ERROR;
