@@ -6,6 +6,7 @@ import Register from "../pages/Register/Register.jsx";
 import Problems from "../pages/Problems/Problems.jsx";
 import Dashboard from "../pages/Dashboard/Dashboard.jsx";
 import AdminDashboard from "../pages/Admin/AdminDashboard.jsx";
+import ProblemDetails from "../pages/ProblemDetails/ProblemDetails.jsx";
 
 function AppRouter(){
     return(
@@ -16,6 +17,7 @@ function AppRouter(){
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/problems" element={<Problems />} />
+                    <Route path="/problems/:slug" element={<ProblemDetails/>} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/admin" element={<AdminDashboard />} />
                 </Route>

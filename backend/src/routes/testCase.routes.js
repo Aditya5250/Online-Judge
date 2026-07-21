@@ -6,7 +6,7 @@ import {createTestCase, getTestCasesByProblem, updateTestCase, deleteTestCase} f
 const router = express.Router();
 
 router.post("/", authMiddleware, authorizeRoles("ADMIN"), createTestCase);
-router.get("/problem/:problemId",authMiddleware, getTestCasesByProblem);
+router.get("/problem/:problemId", getTestCasesByProblem);
 router.put("/:id", authMiddleware, authorizeRoles("ADMIN"), updateTestCase);
 router.delete("/:id", authMiddleware, authorizeRoles("ADMIN"), deleteTestCase);
 
