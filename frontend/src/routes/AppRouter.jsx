@@ -8,14 +8,21 @@ import Dashboard from "../pages/Dashboard/Dashboard.jsx";
 import AdminDashboard from "../pages/Admin/AdminDashboard.jsx";
 import ProblemDetails from "../pages/ProblemDetails/ProblemDetails.jsx";
 
+
 function AppRouter(){
     return(
         <BrowserRouter>
             <Routes>
-                <Route element={<Layout />}>
-                    <Route path="/" element={<Home />} />
+
+                {/* Auth Routes */}
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+
+
+
+                {/* Main App Routes */}
+                <Route element={<Layout />}>
+                    <Route path="/" element={<Home />} />
                     <Route path="/problems" element={<Problems />} />
                     <Route path="/problems/:slug" element={<ProblemDetails/>} />
                     <Route path="/dashboard" element={<Dashboard />} />

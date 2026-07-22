@@ -16,3 +16,15 @@ export const NAV_ITEMS =[
         path: "/Leaderboard",
     }
 ];
+
+export const Auth_ITEMS=[
+    {
+        name:"Login",
+        path:"/login",
+
+    },
+    {
+        name:"Register",
+        path:"/register",
+    },
+];
