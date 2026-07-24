@@ -1,36 +1,96 @@
 import { getUser } from "../../utils/auth";
-
+import DashboardHero from "../../components/dashboard/DashboardHero";
+import StatsCards from "../../components/dashboard/StatsCards";
+import SubmissionChart from "../../components/dashboard/SubmissionChart";
+import VerdictChart from "../../components/dashboard/VerdictChart";
+import AnimateOnView from "../../components/common/AnimateOnView";
+import useDashboardData from "../../hooks/useDashboardData";
+import DifficultyProgress from "../../components/dashboard/DifficultyProgress";
+import RecentSubmissions from "../../components/dashboard/RecentSubmission";
 const Dashboard = () => {
   const user = getUser();
 
+  const{
+    dashboardData,
+    loading,
+    error,
+  }= useDashboardData();
+
+
+  if(loading){
+    return <div>Loading...</div>
+  }
+
+  if(error) return <div>something went wrong</div>
+
+
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] p-8 text-white">
-      <h1 className="text-4xl font-bold">
-        Welcome back, {user?.fullname} 👋
-      </h1>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-      <p className="mt-2 text-gray-400">
-        @{user?.username}
-      </p>
+      <DashboardHero />
+      <StatsCards stats={dashboardData.stats} />
 
-      <p className="text-gray-400">
-        {user?.email}
-      </p>
+      <div className="
+        mt-8 
+        grid
+        grid-cols-1 
+        xl:grid-cols-2
+        gap-6
+      ">
 
-      <div className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-6">
-        <h2 className="text-xl font-semibold">
-          Your Progress
-        </h2>
+        {/* submission chart */}
 
-        <p className="mt-4 text-gray-400">
-          Problems Solved: 0
-        </p>
+        <AnimateOnView
+          placeholderHeight="24rem"
+        >
+          <SubmissionChart
+            data={dashboardData.submissionTrend}
+          />
 
-        <p className="text-gray-400">
-          Submissions: 0
-        </p>
+        </AnimateOnView>
+
+
+
+        {/* verdict chart */}
+
+        <AnimateOnView
+          placeholderHeight="24rem"
+        >
+          <VerdictChart data={dashboardData.verdictDistribution}/>
+
+        </AnimateOnView>
+
+
+
+        {/* difficulty progress card */}
+
+        <AnimateOnView
+        >
+          <DifficultyProgress data={dashboardData.difficultyProgress}/>
+
+        </AnimateOnView>
+
+
+
+        {/* recent submissions */}
+
+        <AnimateOnView
+          placeholderHeight="24rem"
+        >
+          <RecentSubmissions submissions={dashboardData.recentSubmissions}/>
+
+        </AnimateOnView>
+
+
+
+
+
+
       </div>
-    </div>
+
+
+
+    </main>
   );
 };
 

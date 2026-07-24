@@ -1,8 +1,55 @@
 import { createSubmissionService, getUserSubmissionService } from "../services/submission.service.js";
 import { judgeSubmission } from "../judge/judge.service.js";
+import { executeSubmission } from "../judge/execution.service.js";
+
+//Run Code Controller
+export const runCode =async(req,res)=>{
+    try{
+
+        const {language,sourceCode,input}=req.body;
+
+        if(!language || !sourceCode ){
+            return res.status(400).json({
+                success:false,
+                message:"Please provide all required fields: language and sourceCode",
+            })
+        }
+
+        const result = await executeSubmission({
+            language,
+            sourceCode,
+            input: input || "",
+        });
+
+
+        return res.status(200).json({
+            success: true,
+            data: result,
+        });
+    
+
+    }
+    catch(err){
+
+        console.error("Run Code Error: ",err);
+
+        if(err.message === "Unsupported programming language"){
+            return res.status(400).json({
+                success:false,
+                message: err.message,
+            })
+        }
+
+        return res.status(500).json({
+            success: false,
+            error: err.message,
+            message: "Internal server error",
+        });
+
+    }
+}
 
 // Create Submission Controller
-
 export const createSubmission = async (req, res) => { // it will handle creation of the new submissions.
     try {
         const userId = req.user._id; // logged-in user id gets stored in userId by auth middleware;
@@ -74,3 +121,4 @@ export const getMySubmissions= async(req,res)=>{ // will return all the submissi
         });
     }
 }
+

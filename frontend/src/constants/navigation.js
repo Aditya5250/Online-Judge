@@ -7,10 +7,7 @@ export const NAV_ITEMS =[
         name:"Problems",
         path: "/problems",
     },
-    {
-        name:"Dashboard",
-        path: "/dashboard",
-    },
+   
     {
         name:"Leaderboard",
         path: "/Leaderboard",

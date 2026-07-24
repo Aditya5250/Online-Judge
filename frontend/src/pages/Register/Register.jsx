@@ -14,6 +14,7 @@ const Register = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    
   });
 
   const navigate =useNavigate();
@@ -162,7 +163,7 @@ const Register = () => {
         />
 
         <div className="pt-2">
-          <AuthButton loading={loading}>
+          <AuthButton loading={loading} loadingText="Creating Account...">
             Create Account
           </AuthButton>
         </div>

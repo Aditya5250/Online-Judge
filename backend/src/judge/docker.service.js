@@ -5,6 +5,8 @@ import {
 } from "./constants.js";
 import { SUBMISSION_VERDICT } from "../constants/submissionVerdict.js";
 
+
+
 export const runDockerCommand = ({
     language,
     workingDirectory,
@@ -54,6 +56,7 @@ export const runDockerCommand = ({
         ];
 
         const startTime = Date.now();
+        
 
         const child = spawn(
             "docker",
@@ -63,7 +66,7 @@ export const runDockerCommand = ({
         // Timeout protection
         const timeout = setTimeout(() => {
 
-            child.kill("SIGKILL");
+            child.kill("SIGTERM");
 
             reject(
                 new Error("Time limit exceeded")
@@ -72,7 +75,8 @@ export const runDockerCommand = ({
         }, EXECUTION_LIMITS.TIMEOUT);
 
         // Sends input
-        child.stdin.write(input);
+    
+        child.stdin.write(input + "\n");
         child.stdin.end();
 
         // Captures stdout
@@ -96,6 +100,8 @@ export const runDockerCommand = ({
 
         // Process completed
         child.on("close", (exitCode) => {
+
+           
 
             clearTimeout(timeout);
     

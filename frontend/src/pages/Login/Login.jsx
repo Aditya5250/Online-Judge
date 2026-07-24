@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-
+import { useAuth } from "../../context/AuthContext";
 import { setToken, setUser } from "../../utils/auth";
 import AuthLayout from "../../components/auth/AuthLayout";
 import AuthInput from "../../components/auth/AuthInput";
@@ -11,6 +11,9 @@ import { getCurrentUser, loginUser } from "../../services/auth.service";
 
 const Login = () => {
   const navigate = useNavigate();
+
+  const { login } = useAuth();
+  
 
   const [formData, setFormData] = useState({
     email: "",
@@ -68,7 +71,7 @@ const Login = () => {
 
      
 
-      setUser(meResponse.user);
+      login(meResponse.user);
       
      
 
@@ -115,7 +118,7 @@ const Login = () => {
           required
         />
 
-        <AuthButton loading={loading}>
+        <AuthButton loading={loading} loadingText="Signing In...">
           Login
         </AuthButton>
 

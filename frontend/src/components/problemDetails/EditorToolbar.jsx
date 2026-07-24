@@ -6,6 +6,8 @@ const EditorToolbar = ({
   setLanguage,
   running,
   submitting,
+  handleRunCode,
+  handleSubmit,
 }) => {
   return (
     <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
@@ -17,6 +19,8 @@ const EditorToolbar = ({
       <RunSubmitButtons
         running={running}
         submitting={submitting}
+        handleRunCode={handleRunCode}
+        handleSubmit={handleSubmit}
       />
     </div>
   );

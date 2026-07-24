@@ -1,11 +1,14 @@
 const RunSubmitButtons = ({
   running,
   submitting,
+  handleRunCode,
+  handleSubmit,
 }) => {
   return (
     <div className="flex items-center gap-3">
       <button
-        disabled={running}
+        onClick={handleRunCode}
+        disabled={running||submitting}
         className="
           rounded-lg
           border
@@ -22,7 +25,8 @@ const RunSubmitButtons = ({
       </button>
 
       <button
-        disabled={submitting}
+        onClick={handleSubmit}
+        disabled={submitting||running}
         className="
           rounded-lg
           bg-[var(--accent)]

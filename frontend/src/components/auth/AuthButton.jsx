@@ -3,6 +3,7 @@ const AuthButton = ({
   loading = false,
   disabled = false,
   type = "submit",
+  loadingText = "Loading...",
 }) => {
   return (
     <button
@@ -66,7 +67,7 @@ const AuthButton = ({
             "
           />
 
-          Creating Account...
+          {loadingText}
         </div>
       ) : (
         <span className="relative z-10">
