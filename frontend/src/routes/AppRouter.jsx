@@ -8,7 +8,7 @@ import Dashboard from "../pages/Dashboard/Dashboard.jsx";
 import AdminDashboard from "../pages/Admin/AdminDashboard.jsx";
 import ProblemDetails from "../pages/ProblemDetails/ProblemDetails.jsx";
 import Leaderboard from "../pages/Leaderboard/Leaderboard.jsx";
-
+import SubmissionHistory from "../pages/SubmissionHistory/SubmissionHistory.jsx";
 
 function AppRouter(){
     return(
@@ -29,6 +29,7 @@ function AppRouter(){
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/leaderboard" element={<Leaderboard />} />
+                    <Route path="/submissions" element={<SubmissionHistory />} />
                 </Route>
 
             </Routes>
