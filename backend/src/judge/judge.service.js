@@ -42,8 +42,6 @@ const runAgainstTestCases = async({
         ----------------------------------------------------------------------
         */
        
-       console.log("Expected",testCase.expectedOutput);
-       console.log("Actual",executionResult.stdout);
         
         const isCorrect =compareOutput(
             

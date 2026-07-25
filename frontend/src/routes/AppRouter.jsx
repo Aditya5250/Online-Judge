@@ -7,6 +7,7 @@ import Problems from "../pages/Problems/Problems.jsx";
 import Dashboard from "../pages/Dashboard/Dashboard.jsx";
 import AdminDashboard from "../pages/Admin/AdminDashboard.jsx";
 import ProblemDetails from "../pages/ProblemDetails/ProblemDetails.jsx";
+import Leaderboard from "../pages/Leaderboard/Leaderboard.jsx";
 
 
 function AppRouter(){
@@ -27,6 +28,7 @@ function AppRouter(){
                     <Route path="/problems/:slug" element={<ProblemDetails/>} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/leaderboard" element={<Leaderboard />} />
                 </Route>
 
             </Routes>

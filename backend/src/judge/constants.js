@@ -31,7 +31,7 @@ export const EXECUTABLE_NAMES ={
 // execution limits (to prevent infinite loops)
 
 export const EXECUTION_LIMITS ={
-    TIMEOUT:5000,
+    TIMEOUT:8000,
     MEMORY_LIMIT:"256m",
     CPU_LIMIT:"1",
 };

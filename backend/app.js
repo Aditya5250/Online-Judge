@@ -5,6 +5,7 @@ import authRoutes from './src/routes/auth.routes.js';
 import problemRoutes from './src/routes/problem.routes.js';
 import testCaseRoutes from './src/routes/testCase.routes.js';
 import submissionRoutes from "./src/routes/submission.routes.js";
+import leaderboardRoutes from "./src/routes/leaderboard.routes.js";
 
 
 const app = express();
@@ -34,5 +35,8 @@ app.use('/api/testcases', testCaseRoutes);
 
 //Submission Routes
 app.use('/api/submissions',submissionRoutes);
+
+//Leaderboard Routes
+app.use('/api/leaderboard',leaderboardRoutes);
 
 export default app;
