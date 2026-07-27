@@ -37,6 +37,6 @@ const testCaseSchema = new mongoose.Schema({
 
 );
 
-testCaseSchema.index({problemId:1, isHidden:1}); // we can have multiple test cases for a problem, but only one of them can be hidden at a time. This index ensures that there is only one hidden test case per problem.
+testCaseSchema.index({problemId:1, isHidden:1}); // we can have multiple test cases for a problem, but only one of them can be hidden at a time.
 
 export default mongoose.model("TestCase",testCaseSchema);

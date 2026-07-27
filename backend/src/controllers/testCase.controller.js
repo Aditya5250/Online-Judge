@@ -20,7 +20,7 @@ export const createTestCase = async (req, res) => {
         const problem = await Problem.findById(problemId);
 
         if(!problem) {
-            return res.status(404).son({
+            return res.status(404).json({
                 success:false,
                 message:"Problem not found",
             });

@@ -1,6 +1,7 @@
 import Problem from "../models/problem.model.js";
 import slugify from "slugify";
 
+
 export const createProblem = async (req, res) => {
     try {
 
@@ -46,7 +47,7 @@ export const createProblem = async (req, res) => {
         return res.status(201).json({
             success: true,
             message: "Problem created successfully",
-            problem
+            data: problem
         });
     }
     catch (err) {
@@ -96,6 +97,38 @@ export const getAllProblems = async (req, res) => {
 
 }
 
+//for Admin:
+
+export const getAllProblemsForAdmin = async (req, res) => {
+    try {
+
+        const problems = await Problem.find()
+            .select("title slug difficulty tags isPublished createdAt createdBy")
+            .populate(
+                {
+                    path: "createdBy",
+                    select: "fullname username",
+                }
+            )
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            message: "All problems fetched successfully.",
+            data: problems,
+        });
+
+    } catch (err) {
+        
+
+        return res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+
+    }
+};
+
 
 
 
@@ -109,7 +142,7 @@ export const getProblemBySlug = async (req, res) => {
         const problem = await Problem.findOne({
             slug,
             isPublished: true
-        }).populate("createdBy", "Username");
+        }).populate("createdBy", "username");
 
         //if no problem is found we return problem not found error
 
@@ -155,14 +188,13 @@ export const updateProblem = async (req, res) => {
             })
         }
 
-        const { title, problemStatement, difficulty, tags, examples, isPublished } = req.body; //extracting the req data, we will update only these fields
+        const { title, problemStatement, difficulty, tags,  isPublished } = req.body; //extracting the req data, we will update only these fields
 
         //we update only the requestes fields and keep everything else the same,
         if (title) problem.title = title;
         if (problemStatement) problem.problemStatement = problemStatement;
         if (difficulty) problem.difficulty = difficulty;
         if (tags) problem.tags = tags;
-        if (examples) problem.examples = examples;
         if (typeof isPublished === "boolean") problem.isPublished = isPublished; // we check if isPublished is a boolean, because it can be false
 
 
@@ -217,4 +249,5 @@ export const deleteProblem = async (req, res) => {
         });
     }
 }
+
 

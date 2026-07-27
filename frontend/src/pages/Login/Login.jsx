@@ -77,7 +77,13 @@ const Login = () => {
 
       toast.success("Login successful!");
 
-      navigate("/dashboard");
+      if(meResponse.user.role==="ADMIN"){
+        navigate("/admin/");
+
+      }
+      else{
+        navigate("dashboard")
+      }
 
     } catch (error) {
       toast.error(

@@ -6,7 +6,7 @@ import {
     Trophy,
 } from "lucide-react";
 
-import StatCard from "./StateCard";
+import StatCard from "../common/StatCard";
 
 function StatsCards({stats}) {
 

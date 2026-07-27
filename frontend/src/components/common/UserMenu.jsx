@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Link,NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
-  User,
   LayoutDashboard,
   FileText,
   LogOut,
   ChevronDown,
+  ShieldCheck
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -129,9 +129,8 @@ function UserMenu({ user }) {
 
         <ChevronDown
           size={18}
-          className={`transition-transform duration-300 ${
-            open ? "rotate-180" : ""
-          }`}
+          className={`transition-transform duration-300 ${open ? "rotate-180" : ""
+            }`}
           style={{ color: "var(--text-primary)" }}
         />
       </button>
@@ -153,10 +152,9 @@ function UserMenu({ user }) {
           origin-top-right
           z-50
 
-          ${
-            open
-              ? "opacity-100 scale-100 visible"
-              : "opacity-0 scale-95 invisible pointer-events-none"
+          ${open
+            ? "opacity-100 scale-100 visible"
+            : "opacity-0 scale-95 invisible pointer-events-none"
           }
         `}
         style={{
@@ -211,6 +209,41 @@ function UserMenu({ user }) {
 
         <hr style={{ borderColor: "var(--border)" }} />
 
+        {/* Admin Panel */}
+
+        {user?.role === "ADMIN" && (
+          <>
+            <button
+              onClick={() => {
+                setOpen(false);
+                navigate("/admin");
+              }}
+              className="
+                w-full
+                flex
+                items-center
+                gap-3
+                px-5
+                py-4
+                transition-all
+                duration-200
+                hover:bg-yellow-500/10
+              "
+              style={{
+                color: "var(--accent)",
+              }}
+            >
+              <ShieldCheck size={18} />
+
+              <span>Admin Panel</span>
+            </button>
+
+            <hr style={{ borderColor: "var(--border)" }} />
+          </>
+        )}
+
+        {/* Logout */}
+
         {/* Navigation */}
 
         <div className="py-2">
@@ -222,7 +255,7 @@ function UserMenu({ user }) {
                 key={item.label}
                 to={item.to}
                 onClick={() => setOpen(false)}
-                className={({isActive})=>`
+                className={({ isActive }) => `
                   flex
                   items-center
                   gap-3
@@ -232,11 +265,11 @@ function UserMenu({ user }) {
                   duration-200
                   rounded-xl
 
-                  ${isActive?"bg-[var(--accent)] text-black":"text-[var(--text-primary)] hover:bg-[var(--bg-card)]"}
+                  ${isActive ? "bg-[var(--accent)] text-black" : "text-[var(--text-primary)] hover:bg-[var(--bg-card)]"}
                 
                   `
                 }
-                
+
               >
                 <Icon size={18} />
 
