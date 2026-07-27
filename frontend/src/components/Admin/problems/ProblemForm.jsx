@@ -12,7 +12,10 @@ export default function ProblemForm({
   onClose,
   children,
   onSubmit,
-  title = "Create Problem",
+  mode = "create",
+  initialProblem = null,
+  initialTestCases,
+  title,
 }) {
 
   const [formData, setFormData] = useState({
@@ -24,6 +27,7 @@ export default function ProblemForm({
     statement: "",
     inputFormat: "",
     outputFormat: "",
+    constraints: "",
     notes: "",
   });
 
@@ -59,40 +63,76 @@ export default function ProblemForm({
     }));
   }, [formData.title]);
 
+
+  useEffect(() => {
+
+    if (mode !== "edit" || !initialProblem) return;
+
+    setFormData({
+
+      title: initialProblem.title,
+
+      slug: initialProblem.slug,
+
+      difficulty: initialProblem.difficulty,
+
+      tags: initialProblem.tags.join(", "),
+
+      isPublished: initialProblem.isPublished,
+
+      statement: initialProblem.problemStatement.statement,
+
+      inputFormat: initialProblem.problemStatement.inputFormat,
+
+      outputFormat: initialProblem.problemStatement.outputFormat,
+
+      constraints: initialProblem.problemStatement.constraints,
+
+      notes: initialProblem.problemStatement.notes,
+
+    });
+
+    setTestCases(initialTestCases);
+
+  }, [mode, initialProblem, initialTestCases]);
+
+
+
+
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const payload = {
-    title: formData.title,
+    const payload = {
+      title: formData.title,
 
-    slug: formData.slug,
-    
-    difficulty: formData.difficulty,
+      slug: formData.slug,
 
-    tags: formData.tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean),
+      difficulty: formData.difficulty,
 
-    isPublished: formData.isPublished,
+      tags: formData.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
 
-    problemStatement:{
-      statement:formData.statement,
+      isPublished: formData.isPublished,
 
-      inputFormat:formData.inputFormat,
+      problemStatement: {
+        statement: formData.statement,
 
-      outputFormat: formData.outputFormat,
+        inputFormat: formData.inputFormat,
 
-      constraints: formData.constraints,
+        outputFormat: formData.outputFormat,
 
-      notes: formData.notes,
+        constraints: formData.constraints,
 
-    },
-    testCases,
+        notes: formData.notes,
+
+      },
+      testCases,
+    };
+
+    await onSubmit(payload);
   };
-
-  await onSubmit(payload);
-};
 
 
   return (
@@ -150,7 +190,7 @@ export default function ProblemForm({
           <div>
 
             <h2 className="text-2xl font-bold text-white">
-              {title}
+              {title || (mode === "edit" ? "Update Problem" : "Create Problem")}
             </h2>
 
             <p className="mt-1 text-zinc-400">
@@ -179,9 +219,9 @@ export default function ProblemForm({
 
         <div className="flex-1 overflow-y-auto p-6">
 
-          <form 
-          onSubmit={handleSubmit}          
-          className="space-y-6">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-6">
 
             <BasicInfoSection
               formData={formData}
@@ -218,7 +258,7 @@ export default function ProblemForm({
                   type="submit"
                   className="rounded-xl bg-yellow-400 px-5 py-2 font-semibold text-black hover:bg-yellow-300"
                 >
-                  Create Problem
+                  {mode === "edit" ? "Update Problem" : "Create Problem"}
                 </button>
 
               </div>
