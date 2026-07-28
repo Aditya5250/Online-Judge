@@ -6,7 +6,7 @@ import problemRoutes from './src/routes/problem.routes.js';
 import testCaseRoutes from './src/routes/testCase.routes.js';
 import submissionRoutes from "./src/routes/submission.routes.js";
 import leaderboardRoutes from "./src/routes/leaderboard.routes.js";
-
+import aiRoutes from "./src/routes/ai.routes.js";
 
 const app = express();
 
@@ -38,5 +38,9 @@ app.use('/api/submissions',submissionRoutes);
 
 //Leaderboard Routes
 app.use('/api/leaderboard',leaderboardRoutes);
+
+//Ai Hint Route
+
+app.use("/api/ai", aiRoutes);
 
 export default app;
