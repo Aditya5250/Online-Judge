@@ -4,8 +4,21 @@ import { useAuth } from "../../../context/AuthContext";
 export default function AdminNavbar() {
     const { user } = useAuth();
 
+    const hour = new Date().getHours();
 
-    
+    let greeting = "Good Evening";
+
+    if (hour >= 5 && hour < 12) {
+        greeting = "Good Morning";
+    } else if (hour >= 12 && hour < 17) {
+        greeting = "Good Afternoon";
+    } else{
+        greeting = "Good Evening";
+    } 
+
+    const firstName =
+        user?.fullname?.split(" ")[0] || "Admin";
+
     return (
         <header
             className="
@@ -24,13 +37,13 @@ export default function AdminNavbar() {
 
                 <h1 className="text-2xl font-bold text-white">
 
-                    Admin Dashboard
+                    {greeting}, {firstName}
 
                 </h1>
 
                 <p className="mt-1 text-sm text-zinc-500">
 
-                    Manage problems, test cases and platform content.
+                    Here's what's happening on JudgeX today.
 
                 </p>
 

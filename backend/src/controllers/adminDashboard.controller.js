@@ -94,7 +94,7 @@ export const getAdminDashboard = async (req, res) => {
                 day: date.toLocaleDateString("en-US", {
                     weekday: "short",
                 }),
-                count: trendMap[key] || 0,
+                submissions: trendMap[key] || 0,
             });
 
         }

@@ -15,7 +15,6 @@ export const createProblem = async (problemData) =>{
 }
 
 
-
 export  const createTestCase = async (testCaseData) =>{
     const {data} =await api.post("/testcases",testCaseData);
 
@@ -54,3 +53,7 @@ export const deleteTestCase = async (id) => {
 };
 
 
+export const getAdminDashboard = async()=>{
+    const {data} = await api.get("/admin/dashboard");
+    return data;
+};
