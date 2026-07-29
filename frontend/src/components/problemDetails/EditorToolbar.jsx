@@ -1,5 +1,6 @@
 import LanguageSelector from "./LanguageSelector";
 import RunSubmitButtons from "./RunSubmitButtons";
+import AIHintButton from "./AskHintButton";
 
 const EditorToolbar = ({
   language,
@@ -8,6 +9,7 @@ const EditorToolbar = ({
   submitting,
   handleRunCode,
   handleSubmit,
+  onOpenAI,
 }) => {
   return (
     <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
@@ -16,12 +18,20 @@ const EditorToolbar = ({
         setLanguage={setLanguage}
       />
 
-      <RunSubmitButtons
-        running={running}
-        submitting={submitting}
-        handleRunCode={handleRunCode}
-        handleSubmit={handleSubmit}
-      />
+      <div className="flex items-center gap-3">
+
+        <AIHintButton
+          onClick={onOpenAI}
+        />
+
+        <RunSubmitButtons
+          running={running}
+          submitting={submitting}
+          handleRunCode={handleRunCode}
+          handleSubmit={handleSubmit}
+        />
+
+      </div>
     </div>
   );
 };

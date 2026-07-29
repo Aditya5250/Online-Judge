@@ -14,6 +14,7 @@ import { getProblemBySlug } from "../../services/problem.service";
 import { getPublicTestCases } from "../../services/testcase.service";
 import toast from "react-hot-toast";
 import { EDITOR_TEMPLATES } from "../../constants/editorTemplates";
+import AIHintDrawer from "../../components/problemDetails/AIHintDrawer";
 
 const ProblemDetails = () => {
   // ============================
@@ -81,6 +82,12 @@ const ProblemDetails = () => {
   const [customInput, setCustomInput] = useState("");
   const [selectedCase, setSelectedCase] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+
+  //============================
+  // AI Hint
+  //============================
+
+  const [showAI, setShowAI]=useState(false);
 
 
   // ============================
@@ -218,9 +225,6 @@ const ProblemDetails = () => {
 
 
 
-
-
-
   return (
     <main className="h-[calc(100vh-88px)] overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="mx-auto h-full max-w-[1700px] px-4 py-5">
@@ -283,6 +287,7 @@ const ProblemDetails = () => {
                   submitting={submitting}
                   handleRunCode={handleRunCode}
                   handleSubmit={handleSubmit}
+                  onOpenAI={()=>setShowAI(true)}
                 />
 
               </Panel>
@@ -327,6 +332,14 @@ const ProblemDetails = () => {
         </PanelGroup>
 
       </div>
+
+
+      <AIHintDrawer
+        isOpen={showAI}
+        onClose={()=>setShowAI(false)}
+        problemId={problem?._id}
+      />
+
     </main>
   );
 };

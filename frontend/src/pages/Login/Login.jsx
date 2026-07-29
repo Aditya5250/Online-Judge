@@ -82,7 +82,7 @@ const Login = () => {
 
       }
       else{
-        navigate("dashboard")
+        navigate("/dashboard")
       }
 
     } catch (error) {

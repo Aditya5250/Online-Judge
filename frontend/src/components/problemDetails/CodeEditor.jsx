@@ -17,6 +17,7 @@ const CodeEditor = ({
   submitting,
   handleRunCode,
   handleSubmit,
+  onOpenAI,
 }) => {
   return (
     <section className="flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)]">
@@ -33,6 +34,7 @@ const CodeEditor = ({
           submitting={submitting}
           handleRunCode={handleRunCode}
           handleSubmit={handleSubmit}
+          onOpenAI={onOpenAI}
         />
       </div>
 
