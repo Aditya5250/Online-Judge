@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { SUBMISSION_STATUS} from "../constants/submissionStatus.js";
-import {SUBMISSION_VERDICT} from "../constants/submissionVerdict.js";
+import { SUBMISSION_STATUS } from "../constants/submissionStatus.js";
+import { SUBMISSION_VERDICT } from "../constants/submissionVerdict.js";
 
 const submissionSchema = new mongoose.Schema(
     {
@@ -32,45 +32,45 @@ const submissionSchema = new mongoose.Schema(
             trim: true,
         },
 
-       
+
         status: {
             type: String,
             enum: Object.values(SUBMISSION_STATUS),
-            default: "PENDING",
+            default: SUBMISSION_STATUS.PENDING,
         },
 
-       
+
         verdict: {
             type: String,
             enum: Object.values(SUBMISSION_VERDICT),
             default: null,
         },
 
-        
+
         executionTime: {
             type: Number,
             default: 0,
         },
 
-       
+
         memoryUsed: {
             type: Number,
             default: 0,
         },
 
-       
+
         passedTestCases: {
             type: Number,
             default: 0,
         },
 
-        
+
         totalTestCases: {
             type: Number,
             default: 0,
         },
 
-        
+
         errorMessage: {
             type: String,
             default: "",

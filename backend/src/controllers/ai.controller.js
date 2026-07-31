@@ -7,7 +7,7 @@ export const getAIHints = async (req, res) => {
 
         const { problemId } = req.params;
 
-        // 1. Checking cache
+        //Checking cache
         const cachedHints = await AIHint.findOne({ problemId });
 
         if (cachedHints) {
@@ -28,7 +28,7 @@ export const getAIHints = async (req, res) => {
             });
         }
 
-        // 3. Generating hints using Gemini
+        // Generating hints using Gemini
         const result = await generateHints(problem);
 
         // Saving to MongoDB
@@ -37,7 +37,6 @@ export const getAIHints = async (req, res) => {
             hints: result.hints,
         });
 
-        // generated hints
         return res.status(200).json({
             success: true,
             cached: false,

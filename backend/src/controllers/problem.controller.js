@@ -54,7 +54,7 @@ export const createProblem = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Internal server error",
-            
+
         });
     }
 }
@@ -91,7 +91,7 @@ export const getAllProblems = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Internal server error",
-           
+
         });
     }
 
@@ -119,7 +119,7 @@ export const getAllProblemsForAdmin = async (req, res) => {
         });
 
     } catch (err) {
-        
+
 
         return res.status(500).json({
             success: false,
@@ -163,7 +163,7 @@ export const getProblemBySlug = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Internal server error",
-            
+
         });
     }
 
@@ -188,7 +188,7 @@ export const updateProblem = async (req, res) => {
             })
         }
 
-        const { title, problemStatement, difficulty, tags,  isPublished } = req.body; //extracting the req data, we will update only these fields
+        const { title, problemStatement, difficulty, tags, isPublished } = req.body; //extracting the req data, we will update only these fields
 
         //we update only the requestes fields and keep everything else the same,
         if (title) problem.title = title;
@@ -207,11 +207,11 @@ export const updateProblem = async (req, res) => {
         })
     }
     catch (err) {
-        
+
         return res.status(500).json({
             success: false,
             message: "Internal server error",
-            
+
         });
     }
 }

@@ -11,7 +11,7 @@ export const getLeaderboard = async (req, res) => {
     } catch (err) {
         return res.status(500).json({
             success: false,
-            message: err.message,
+            message: "Internal server error",
         });
     }
 };

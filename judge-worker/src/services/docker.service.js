@@ -1,36 +1,77 @@
 import { spawn } from "child_process";
+
 import {
     DOCKER_IMAGES,
     EXECUTION_LIMITS,
-} from "./constants.js";
-import { SUBMISSION_VERDICT } from "../constants/submissionVerdict.js";
+} from "../constants/execution.constants.js";
 
+const WORKSPACE_ROOT =
+    process.env.WORKSPACE_ROOT || "/workspace";
 
+const HOST_WORKSPACE =
+    process.env.HOST_WORKSPACE;
 
+if (!HOST_WORKSPACE) {
+    throw new Error(
+        "HOST_WORKSPACE environment variable is missing."
+    );
+}
+
+/**
+ * Converts:
+ *
+ * /workspace/<uuid>
+ *
+ * to
+ *
+ * C:/JudgeX/judge-workspace/<uuid>
+ */
+const resolveHostWorkspace = (workingDirectory) => {
+
+    if (!workingDirectory.startsWith(WORKSPACE_ROOT)) {
+        throw new Error(
+            `Invalid workspace path: ${workingDirectory}`
+        );
+    }
+
+    const relativeDirectory = workingDirectory.slice(
+        WORKSPACE_ROOT.length
+    );
+
+    return (
+        HOST_WORKSPACE.replace(/\/$/, "") +
+        relativeDirectory
+    );
+};
+
+/**
+ * Executes a Docker container.
+ */
 export const runDockerCommand = ({
     language,
     workingDirectory,
     command,
     input = "",
-}) => { // it will execute code inside docker... it will 1. launch docker container, 2. compile code, 3. execute programe, 4. capture stdout & stderr, 5. Return execution result
+}) => {
 
-    return new Promise((resolve, reject) => { //new Promise because spawn is event-driven.. it doe not return output immediately
+    return new Promise((resolve, reject) => {
 
         let stdout = "";
         let stderr = "";
 
-        // Windows -> Docker path compatibility
         const dockerVolume =
-            `${workingDirectory.replace(/\\/g, "/")}:/workspace`;
+            `${resolveHostWorkspace(
+                workingDirectory
+            )}:/workspace`;
 
         const dockerArgs = [
-            "run",
-            "--rm",
 
+            "run",
+
+            "--rm",
 
             "-i",
 
-            // Disable internet
             "--network=none",
 
             "--memory",
@@ -39,57 +80,50 @@ export const runDockerCommand = ({
             "--cpus",
             EXECUTION_LIMITS.CPU_LIMIT,
 
-            // Mount temp directory
             "-v",
             dockerVolume,
 
             "-w",
             "/workspace",
 
-            // Docker image
             DOCKER_IMAGES[language],
 
-            // Execute shell command
             "sh",
+
             "-c",
+
             command,
         ];
 
         const startTime = Date.now();
-        
 
         const child = spawn(
             "docker",
             dockerArgs
         );
 
-        // Timeout protection
         const timeout = setTimeout(() => {
 
             child.kill("SIGTERM");
 
             reject(
-                new Error("Time limit exceeded")
+                new Error("Time limit exceeded.")
             );
 
         }, EXECUTION_LIMITS.TIMEOUT);
 
-        // Sends input
-    
         child.stdin.write(input + "\n");
+
         child.stdin.end();
 
-        // Captures stdout
         child.stdout.on("data", (data) => {
             stdout += data.toString();
         });
 
-        // Captures stderr
         child.stderr.on("data", (data) => {
             stderr += data.toString();
         });
 
-        // process the error
         child.on("error", (error) => {
 
             clearTimeout(timeout);
@@ -98,20 +132,23 @@ export const runDockerCommand = ({
 
         });
 
-        // Process completed
         child.on("close", (exitCode) => {
 
-           
-
             clearTimeout(timeout);
-    
 
             resolve({
+
                 success: exitCode === 0,
+
                 stdout,
+
                 stderr,
+
                 exitCode,
-                executionTime: Date.now() - startTime,
+
+                executionTime:
+                    Date.now() - startTime,
+
             });
 
         });
@@ -120,43 +157,53 @@ export const runDockerCommand = ({
 
 };
 
-export const compileInDocker=async({
+/**
+ * Compiles source code.
+ */
+export const compileInDocker = async ({
     language,
     workingDirectory,
     compileCommand,
-})=>{
-    if(!compileCommand){
+}) => {
+
+    if (!compileCommand) {
         return {
-            success:true,
+            success: true,
         };
     }
-    const result =await runDockerCommand({
+
+    return await runDockerCommand({
+
         language,
+
         workingDirectory,
-        command:compileCommand,
+
+        command: compileCommand,
+
     });
 
-    
-    if(!result.success){
-        result.type=SUBMISSION_VERDICT.COMPILATION_ERROR;
-    }
-    return result;
-}
+};
 
-export const runInDocker =async({
+/**
+ * Executes compiled/interpreted code.
+ */
+export const runInDocker = async ({
     language,
     workingDirectory,
     runCommand,
     input,
-})=>{
-    const result =await runDockerCommand({
+}) => {
+
+    return await runDockerCommand({
+
         language,
+
         workingDirectory,
-        command:runCommand,
+
+        command: runCommand,
+
         input,
+
     });
-    if(!result.success){
-        result.type=SUBMISSION_VERDICT.RUNTIME_ERROR;
-    }
-    return result;
-}
+
+};

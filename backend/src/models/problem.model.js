@@ -3,86 +3,86 @@ import slugify from "slugify";
 
 
 const problemSchema = new mongoose.Schema({
-    title:{
-        type:String,
-        required:true,
-        trim:true,
-        unique:true,
+    title: {
+        type: String,
+        required: true,
+        trim: true,
+        unique: true,
     },
-    slug:{
-        type:String,
-        required:true,
-        unique:true,
-        lowercase:true,
-        trim:true,
+    slug: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
     },
-    problemStatement:{
-        statement:{
-            type:String,
-            required:true,
+    problemStatement: {
+        statement: {
+            type: String,
+            required: true,
         },
 
-        inputFormat:{
-            type:String,
-            required:true,
+        inputFormat: {
+            type: String,
+            required: true,
         },
 
-        outputFormat:{
-            type:String,
-            required:true,
+        outputFormat: {
+            type: String,
+            required: true,
         },
-        constraints:{
-            type:String,
-            required:true,
+        constraints: {
+            type: String,
+            required: true,
         },
-        notes:{
-            type:String,
-            default:""
+        notes: {
+            type: String,
+            default: ""
         }
     },
 
-    difficulty:{
-        type:String,
-        enum:["EASY","MEDIUM","HARD"],
-        required:true,
-    },  
+    difficulty: {
+        type: String,
+        enum: ["EASY", "MEDIUM", "HARD"],
+        required: true,
+    },
 
-    tags:[
+    tags: [
         {
-            type:String,
-            trim:true,
+            type: String,
+            trim: true,
         },
     ],
 
 
-    createdBy:{
-        type:mongoose.Schema.Types.ObjectId,
-            ref:"User",
-            required:true,
-        
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+
     },
 
-    isPublished:{
-        type:Boolean,
-        default:true,
+    isPublished: {
+        type: Boolean,
+        default: true,
     },
 },
-{
-    timestamps:true,
-}
+    {
+        timestamps: true,
+    }
 );
 
-problemSchema.pre("save",function(next){
-    if(!this.isModified("title")){ // we only want to generate a new slug if the title has been modified, otherwise we will end up with a new slug every time we update the problem
-        return next ;
+problemSchema.pre("save", function (next) {
+    if (!this.isModified("title")) { // we only want to generate a new slug if the title has been modified, otherwise we will end up with a new slug every time we update the problem
+        return next;
     }
 
-    this.slug =slugify(this.title,{
-        lower:true,
-        strict:true, // remove special characters
-        trim:true,
+    this.slug = slugify(this.title, {
+        lower: true,
+        strict: true, // remove special characters
+        trim: true,
     });
 })
 
 
-export default mongoose.model("Problem",problemSchema);
+export default mongoose.model("Problem", problemSchema);

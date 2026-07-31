@@ -45,6 +45,7 @@ export const signup = async (req, res) => {
             success: true,
             message: "User registered successfully",
         });
+        
     }
     catch (err) { //catching any errors that occur during the user creation process and sending a 500 status code with the error message
         res.status(500).json({
@@ -55,48 +56,56 @@ export const signup = async (req, res) => {
 
 }
 
-export const login =async (req,res)=>{
-    
-        const {email,password}=req.body; // getting hold of the email and password from the request body
+export const login = async (req, res) => {
+    try {
+
+        const { email, password } = req.body; // getting hold of the email and password from the request body
 
         //checking if both email and password are provided by the user
-        if(!email || !password){
+        if (!email || !password) {
             return res.status(400).json({
-                success:false,
-                message:"Both email and password are required"
+                success: false,
+                message: "Both email and password are required"
             });
         }
 
         //checking if the user exists in the database by searching for the email
 
-        const user= await User.findOne({email});
+        const user = await User.findOne({ email });
 
-        if(!user){
+        if (!user) {
             return res.status(404).json({
-                success:false,
-                message:"User not found!!",
+                success: false,
+                message: "User not found!!",
             })
         }
 
 
         // if user exists , we compare the provided password with the hashed password stored in the database using bcrypt.compare() method
 
-        const isMatch= await bcrypt.compare(password,user.password);
+        const isMatch = await bcrypt.compare(password, user.password);
 
-        if(!isMatch){
+        if (!isMatch) {
             return res.status(401).json({
-                success:false,
-                message:"Invalid credentials!!",
+                success: false,
+                message: "Invalid credentials!!",
             })
         }
 
         // if password matches, we generate a JWT token fot the user and send it back to the client along with a success message
-        const token=generateToken(user._id);
+        const token = generateToken(user._id);
         return res.status(200).json({
-            success:true,
-            token:token,
-            message:"User logged in successfully",
+            success: true,
+            token: token,
+            message: "User logged in successfully",
         })
-    
-  
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+
+
 }

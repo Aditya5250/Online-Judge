@@ -1,0 +1,49 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: judgex-backend
+
+    ports:
+      - "5000:5000"
+
+    env_file:
+      - ./backend/.env
+
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: judgex-frontend
+
+    ports:
+      - "5173:80"
+
+    depends_on:
+      - backend
+
+    restart: unless-stopped
+
+  judge-worker:
+    build:
+      context: ./judge-worker
+      dockerfile: Dockerfile
+
+    container_name: judgex-judge-worker
+
+    ports:
+      - "7000:7000"
+
+    env_file:
+      - ./judge-worker/.env
+
+    volumes:
+      - ./judge-workspace:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    restart: unless-stopped

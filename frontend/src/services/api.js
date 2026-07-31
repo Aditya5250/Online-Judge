@@ -2,9 +2,12 @@ import axios from "axios";
 
 import { getToken } from "../utils/auth";
 
+console.log(import.meta.env.VITE_API_URL);
+
 const api= axios.create({
-    baseURL:"http://localhost:5000/api",
-    withCredentials: true
+    baseURL:import.meta.env.VITE_API_URL,
+    withCredentials: true,
+    timeout:30000,
 });
 
 api.interceptors.request.use((config)=>{

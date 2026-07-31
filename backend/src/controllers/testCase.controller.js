@@ -6,23 +6,23 @@ import TestCase from "../models/testCase.model.js";
 
 export const createTestCase = async (req, res) => {
 
-    try{
+    try {
 
-        const {problemId,input,expectedOutput,explanation,isHidden}= req.body; // getting hold of the data
+        const { problemId, input, expectedOutput, explanation, isHidden } = req.body; // getting hold of the data
 
-        if(!problemId || !input || !expectedOutput ){
+        if (!problemId || !input || !expectedOutput) {
             return res.status(400).json({
-                success:false,
-                message:"Please provide all required fields: problemId, input and expectedOutput",
+                success: false,
+                message: "Please provide all required fields: problemId, input and expectedOutput",
             })
         }
 
         const problem = await Problem.findById(problemId);
 
-        if(!problem) {
+        if (!problem) {
             return res.status(404).json({
-                success:false,
-                message:"Problem not found",
+                success: false,
+                message: "Problem not found",
             });
         }
 
@@ -32,25 +32,25 @@ export const createTestCase = async (req, res) => {
             expectedOutput,
             explanation,
             isHidden,
-            createdBy:req.user._id,
+            createdBy: req.user._id,
         })
 
         return res.status(201).json({
-            success:true,
-            message:"Test case created successfully.",
+            success: true,
+            message: "Test case created successfully.",
             data: testcase,
         })
 
     }
-    catch(err){
+    catch (err) {
         console.log(err);
         return res.status(500).json({
-            success:false,
-            message:"Internal server error"
+            success: false,
+            message: "Internal server error"
         })
     }
 
-    
+
 
 };
 

@@ -1,0 +1,27 @@
+{
+  "name": "judgex-judge-worker",
+  "version": "1.0.0",
+  "description": "Judge Worker Service for JudgeX",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [
+    "judge",
+    "compiler",
+    "docker",
+    "online-judge"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

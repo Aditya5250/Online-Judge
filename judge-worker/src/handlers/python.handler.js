@@ -1,19 +1,23 @@
-import {SOURCE_FILE_NAMES} from "../constants.js";
+import {
+    SOURCE_FILE_NAMES,
+} from "../constants/execution.constants.js";
 
-//Python Handler
+// Python Handler
 
-const pythonHandler ={
+const pythonHandler = {
     language: "PYTHON",
+
     sourceFileName: SOURCE_FILE_NAMES.PYTHON,
 
-    getCompileCommand(){
+   
+    getCompileCommand() {
         return null;
     },
 
-    // execution command
-    getRunCommand(){
+   
+    getRunCommand() {
         return `python3 ${SOURCE_FILE_NAMES.PYTHON}`;
     },
-}
+};
 
 export default pythonHandler;
