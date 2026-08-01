@@ -11,10 +11,24 @@ import adminDashboardRoute from "./src/routes/adminDashboard.routes.js"
 
 const app = express();
 
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://judgex.live",
+    "https://www.judgex.live",
+]
+
 //middlewares
 app.use(
     cors({
-        origin: process.env.CLIENT_URL || "http://localhost:5173",
+        origin: (origin, callback) => {
+           if(!origin){
+                return callback(null, true);
+           }
+           if(allowedOrigins.includes(origin)){
+                return callback(null, true);
+           }
+           return callback(new Error(`Origin ${origin} not allowed by CORS`));
+        },
         credentials: true,
     })
 );
