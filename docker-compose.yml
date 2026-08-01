@@ -1,8 +1,9 @@
+
 services:
+
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
 
     container_name: judgex-backend
 
@@ -12,12 +13,18 @@ services:
     env_file:
       - ./backend/.env
 
+    depends_on:
+      - judge-worker
+
     restart: unless-stopped
+
+    networks:
+      - judgex-network
+
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
 
     container_name: judgex-frontend
 
@@ -29,10 +36,13 @@ services:
 
     restart: unless-stopped
 
+    networks:
+      - judgex-network
+
+
   judge-worker:
     build:
       context: ./judge-worker
-      dockerfile: Dockerfile
 
     container_name: judgex-judge-worker
 
@@ -47,3 +57,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
     restart: unless-stopped
+
+    networks:
+      - judgex-network
+
+
+networks:
+  judgex-network:
+    driver: bridge
