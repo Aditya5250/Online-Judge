@@ -1,4 +1,3 @@
-
 services:
 
   backend:
@@ -12,6 +11,13 @@ services:
 
     env_file:
       - ./backend/.env
+
+    environment:
+      WORKSPACE_ROOT: /workspace
+
+    volumes:
+      - ./judge-workspace:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
 
     depends_on:
       - judge-worker

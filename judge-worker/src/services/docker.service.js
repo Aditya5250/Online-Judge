@@ -8,25 +8,14 @@ import {
 const WORKSPACE_ROOT =
     process.env.WORKSPACE_ROOT || "/workspace";
 
-const HOST_WORKSPACE =
-    process.env.HOST_WORKSPACE;
-
-if (!HOST_WORKSPACE) {
-    throw new Error(
-        "HOST_WORKSPACE environment variable is missing."
-    );
-}
-
 /**
- * Converts:
- *
- * /workspace/<uuid>
- *
- * to
- *
- * C:/JudgeX/judge-workspace/<uuid>
+ * Validate workspace path.
  */
-const resolveHostWorkspace = (workingDirectory) => {
+const validateWorkspace = (workingDirectory) => {
+
+    if (!workingDirectory) {
+        throw new Error("Working directory is missing.");
+    }
 
     if (!workingDirectory.startsWith(WORKSPACE_ROOT)) {
         throw new Error(
@@ -34,14 +23,7 @@ const resolveHostWorkspace = (workingDirectory) => {
         );
     }
 
-    const relativeDirectory = workingDirectory.slice(
-        WORKSPACE_ROOT.length
-    );
-
-    return (
-        HOST_WORKSPACE.replace(/\/$/, "") +
-        relativeDirectory
-    );
+    return workingDirectory;
 };
 
 /**
@@ -59,10 +41,8 @@ export const runDockerCommand = ({
         let stdout = "";
         let stderr = "";
 
-        const dockerVolume =
-            `${resolveHostWorkspace(
-                workingDirectory
-            )}:/workspace`;
+        const workspace =
+            validateWorkspace(workingDirectory);
 
         const dockerArgs = [
 
@@ -81,7 +61,7 @@ export const runDockerCommand = ({
             EXECUTION_LIMITS.CPU_LIMIT,
 
             "-v",
-            dockerVolume,
+            `${workspace}:/workspace`,
 
             "-w",
             "/workspace",
@@ -97,6 +77,8 @@ export const runDockerCommand = ({
 
         const startTime = Date.now();
 
+        let timedOut = false;
+
         const child = spawn(
             "docker",
             dockerArgs
@@ -104,16 +86,13 @@ export const runDockerCommand = ({
 
         const timeout = setTimeout(() => {
 
-            child.kill("SIGTERM");
+            timedOut = true;
 
-            reject(
-                new Error("Time limit exceeded.")
-            );
+            child.kill("SIGTERM");
 
         }, EXECUTION_LIMITS.TIMEOUT);
 
         child.stdin.write(input + "\n");
-
         child.stdin.end();
 
         child.stdout.on("data", (data) => {
@@ -128,7 +107,11 @@ export const runDockerCommand = ({
 
             clearTimeout(timeout);
 
-            reject(error);
+            reject(
+                new Error(
+                    `Failed to start Docker: ${error.message}`
+                )
+            );
 
         });
 
@@ -136,9 +119,33 @@ export const runDockerCommand = ({
 
             clearTimeout(timeout);
 
+            if (timedOut) {
+
+                return reject(
+                    new Error("Time limit exceeded.")
+                );
+
+            }
+
+            if (exitCode !== 0) {
+
+                return reject(
+
+                    new Error(
+
+                        stderr ||
+
+                        `Docker exited with code ${exitCode}`
+
+                    )
+
+                );
+
+            }
+
             resolve({
 
-                success: exitCode === 0,
+                success: true,
 
                 stdout,
 
@@ -158,7 +165,7 @@ export const runDockerCommand = ({
 };
 
 /**
- * Compiles source code.
+ * Compile source code.
  */
 export const compileInDocker = async ({
     language,
@@ -167,9 +174,11 @@ export const compileInDocker = async ({
 }) => {
 
     if (!compileCommand) {
+
         return {
             success: true,
         };
+
     }
 
     return await runDockerCommand({
@@ -185,7 +194,7 @@ export const compileInDocker = async ({
 };
 
 /**
- * Executes compiled/interpreted code.
+ * Execute source code.
  */
 export const runInDocker = async ({
     language,

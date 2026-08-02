@@ -15,6 +15,7 @@ const allowedOrigins = [
     "http://localhost:5173",
     "https://judgex.live",
     "https://www.judgex.live",
+    "https://api.judgex.live",
 ]
 
 //middlewares
