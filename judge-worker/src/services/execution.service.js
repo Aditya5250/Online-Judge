@@ -4,6 +4,7 @@ import {
     createTempDirectory,
     writeSourceCode,
     deleteTempDirectory,
+    getHostWorkspace,
 } from "../utils/fileManager.js";
 
 import {
@@ -53,6 +54,8 @@ export const executeSubmission = async ({
         const compileCommand = handler.getCompileCommand();
         const runCommand = handler.getRunCommand();
 
+        const hostWorkspace = getHostWorkspace(tempDirectory);
+
         /*
         ---------------------------------------------------------
         | Compilation
@@ -61,7 +64,7 @@ export const executeSubmission = async ({
 
         const compileResult = await compileInDocker({
             language,
-            workingDirectory: tempDirectory,
+            workingDirectory: hostWorkspace,
             compileCommand,
         });
 
@@ -82,12 +85,12 @@ export const executeSubmission = async ({
 
         const executionResult = await runInDocker({
             language,
-            workingDirectory: tempDirectory,
+            workingDirectory: hostWorkspace,
             runCommand,
             input,
         });
 
-        
+
         if (!executionResult.success) {
 
             const isTimeLimitExceeded =

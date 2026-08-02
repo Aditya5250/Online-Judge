@@ -2,7 +2,9 @@ import fs from "fs/promises";
 import path from "path";
 import crypto from "crypto";
 
-const WORKSPACE_ROOT = process.env.WORKSPACE_ROOT || "/workspace";
+const CONTAINER_WORKSPACE = process.env.WORKSPACE_ROOT || "/workspace";
+
+const HOST_WORKSPACE = process.env.HOST_WORKSPACE_ROOT || "/home/ec2-user/judge-workspace";
 
 /**
  * Creates a unique temporary working directory
@@ -11,13 +13,19 @@ const WORKSPACE_ROOT = process.env.WORKSPACE_ROOT || "/workspace";
 export const createTempDirectory = async () => {
     const folderName = crypto.randomUUID();
 
-    const tempDirectory = path.join(WORKSPACE_ROOT, folderName);
+    const tempDirectory = path.join(CONTAINER_WORKSPACE, folderName);
 
     await fs.mkdir(tempDirectory, {
         recursive: true,
     });
 
     return tempDirectory;
+};
+
+export const getHostWorkspace = (directory) => {
+    const folderName = path.basename(directory);
+
+    return path.join(HOST_WORKSPACE, folderName);
 };
 
 /**
