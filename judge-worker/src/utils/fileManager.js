@@ -52,7 +52,7 @@ export const writeSourceCode = async (
     return filePath;
 };
 
-console.log(await fs.readdir(tempDirectory));
+
 
 /**
  * Returns the executable path.
