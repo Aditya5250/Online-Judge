@@ -12,17 +12,6 @@ const HOST_WORKSPACE = process.env.HOST_WORKSPACE || process.env.HOST_WORKSPACE_
  * Creates a unique temporary working directory
  * for a single code execution.
  */
-export const createTempDirectory = async () => {
-    const folderName = crypto.randomUUID();
-
-    const tempDirectory = path.join(CONTAINER_WORKSPACE, folderName);
-
-    await fs.mkdir(tempDirectory, {
-        recursive: true,
-    });
-
-    return tempDirectory;
-};
 
 export const getHostWorkspace = (directory) => {
     const folderName = path.basename(directory);
