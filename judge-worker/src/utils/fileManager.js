@@ -30,6 +30,23 @@ export const getHostWorkspace = (directory) => {
     return path.join(HOST_WORKSPACE, folderName);
 };
 
+// Checkin
+export const createTempDirectory = async () => {
+    const folderName = crypto.randomUUID();
+
+    const tempDirectory = path.join(CONTAINER_WORKSPACE, folderName);
+
+    console.log("Creating:", tempDirectory);
+
+    await fs.mkdir(tempDirectory, {
+        recursive: true,
+    });
+
+    console.log("Created successfully");
+
+    return tempDirectory;
+};
+
 /**
  * Writes the user's source code
  * into the working directory.
@@ -45,6 +62,8 @@ export const writeSourceCode = async (
 
     return filePath;
 };
+
+console.log(await fs.readdir(tempDirectory));
 
 /**
  * Returns the executable path.

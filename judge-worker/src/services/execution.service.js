@@ -111,6 +111,7 @@ export const executeSubmission = async ({
 
         return executionResult;
     } finally {
-        await deleteTempDirectory(tempDirectory);
+        // await deleteTempDirectory(tempDirectory);
+        console.log("skipping cleanup for debugging");
     }
 };
