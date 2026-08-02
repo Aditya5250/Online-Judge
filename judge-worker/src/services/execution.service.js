@@ -37,6 +37,8 @@ export const executeSubmission = async ({
 
     const tempDirectory = await createTempDirectory();
 
+    console.log("Workspace:", tempDirectory);
+
     try {
         // Write source code
         await writeSourceCode(
@@ -44,6 +46,8 @@ export const executeSubmission = async ({
             handler.sourceFileName,
             sourceCode
         );
+
+        console.log("Source file written.");
 
         // Build commands
         const compileCommand = handler.getCompileCommand();
@@ -68,6 +72,8 @@ export const executeSubmission = async ({
             };
         }
 
+        console.log("Compiled finished.");
+
         /*
         ---------------------------------------------------------
         | Execution
@@ -81,6 +87,7 @@ export const executeSubmission = async ({
             input,
         });
 
+        
         if (!executionResult.success) {
 
             const isTimeLimitExceeded =
@@ -95,6 +102,8 @@ export const executeSubmission = async ({
                     : EXECUTION_TYPES.RUNTIME_ERROR,
             };
         }
+
+        console.log("Execution finished.");
 
         return executionResult;
     } finally {

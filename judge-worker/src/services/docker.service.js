@@ -79,6 +79,12 @@ export const runDockerCommand = ({
 
         let timedOut = false;
 
+        console.log("============================================================");
+        console.log("Running Docker");
+        console.log("docker", dockerArgs.join(" "));
+        console.log("============================================================");
+
+
         const child = spawn(
             "docker",
             dockerArgs
@@ -116,6 +122,8 @@ export const runDockerCommand = ({
         });
 
         child.on("close", (exitCode) => {
+
+            console.log("Docker exited:", exitCode);
 
             clearTimeout(timeout);
 

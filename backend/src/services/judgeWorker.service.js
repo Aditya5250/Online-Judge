@@ -16,7 +16,13 @@ export const executeSubmission = async ({
     input = "",
 }) => {
 
-    
+
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+        controller.abort();
+    }, 30000);
+
     const response = await fetch(
         `${JUDGE_WORKER_URL}/api/execute`,
         {
@@ -29,8 +35,11 @@ export const executeSubmission = async ({
                 sourceCode,
                 input,
             }),
+            signal: controller.signal,
         }
     );
+
+    clearTimeout(timeout);
 
     const data = await response.json();
 
