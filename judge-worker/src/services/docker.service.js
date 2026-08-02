@@ -6,7 +6,9 @@ import {
 } from "../constants/execution.constants.js";
 
 const WORKSPACE_ROOT =
-    process.env.WORKSPACE_ROOT || "/workspace";
+    process.env.HOST_WORKSPACE ||
+    process.env.WORKSPACE_ROOT ||
+    "/workspace";
 
 /**
  * Validate workspace path.

@@ -38,7 +38,9 @@ export const executeSubmission = async ({
 
     const tempDirectory = await createTempDirectory();
 
-    console.log("Workspace:", tempDirectory);
+    const hostWorkspace = getHostWorkspace(tempDirectory);
+
+    console.log("Host Workspace:", hostWorkspace);
 
     try {
         // Write source code
@@ -54,7 +56,6 @@ export const executeSubmission = async ({
         const compileCommand = handler.getCompileCommand();
         const runCommand = handler.getRunCommand();
 
-        const hostWorkspace = getHostWorkspace(tempDirectory);
 
         /*
         ---------------------------------------------------------

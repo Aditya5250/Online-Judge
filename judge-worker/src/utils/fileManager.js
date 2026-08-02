@@ -4,7 +4,9 @@ import crypto from "crypto";
 
 const CONTAINER_WORKSPACE = process.env.WORKSPACE_ROOT || "/workspace";
 
-const HOST_WORKSPACE = process.env.HOST_WORKSPACE_ROOT || "/home/ec2-user/judge-workspace";
+const HOST_WORKSPACE = process.env.HOST_WORKSPACE || process.env.HOST_WORKSPACE_ROOT || "/home/ec2-user/judge-workspace";
+
+
 
 /**
  * Creates a unique temporary working directory
