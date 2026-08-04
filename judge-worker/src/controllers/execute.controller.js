@@ -26,7 +26,8 @@ export const execute = async (req, res) => {
             ...result,
         });
     } catch (error) {
-        console.error("Execution Error:", error);
+        console.error("============ CONTROLLER CATCH ===========================");
+        console.error(error);
 
         return res.status(500).json({
             success: false,

@@ -25,13 +25,12 @@ export const createTempDirectory = async () => {
 
     const tempDirectory = path.join(CONTAINER_WORKSPACE, folderName);
 
-    console.log("Creating:", tempDirectory);
+    
 
     await fs.mkdir(tempDirectory, {
         recursive: true,
     });
 
-    console.log("Created successfully");
 
     return tempDirectory;
 };

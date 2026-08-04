@@ -1,4 +1,4 @@
-import { spawn } from "child_process";
+import { spawn, execFile } from "child_process";
 
 import {
     DOCKER_IMAGES,
@@ -81,27 +81,46 @@ export const runDockerCommand = ({
 
         let timedOut = false;
 
-        console.log("============================================================");
-        console.log("Running Docker");
-        console.log("docker", dockerArgs.join(" "));
-        console.log("============================================================");
 
 
-        const child = spawn(
+        
+
+
+        const child = execFile(
             "docker",
-            dockerArgs
+            dockerArgs,
+            (err, stdout, stderr) => {
+                console.log(err);
+                console.log(stdout);
+                console.log(stderr);
+            }
         );
+
+        
+
+
 
         const timeout = setTimeout(() => {
 
+            
+
             timedOut = true;
 
-            child.kill("SIGTERM");
+            const killed = child.kill("SIGKILL");
+
+           
 
         }, EXECUTION_LIMITS.TIMEOUT);
 
-        child.stdin.write(input + "\n");
+        // child.stdin.write(input + "\n");
+        // child.stdin.end();
+        //...................................check..................................
+        if (input) {
+            child.stdin.write(input);
+        }
+
         child.stdin.end();
+        //..........................................................................
 
         child.stdout.on("data", (data) => {
             stdout += data.toString();
@@ -123,33 +142,48 @@ export const runDockerCommand = ({
 
         });
 
-        child.on("close", (exitCode) => {
+        child.on("close", (exitCode,signal) => {
 
-            console.log("Docker exited:", exitCode);
+    
 
             clearTimeout(timeout);
 
             if (timedOut) {
 
-                return reject(
-                    new Error("Time limit exceeded.")
-                );
+                return resolve({
+
+                    success: false,
+
+                    stdout,
+
+                    stderr: "Time limit exceeded.",
+
+                    exitCode: 124,
+
+                    executionTime:
+                        Date.now() - startTime,
+
+                });
 
             }
-
             if (exitCode !== 0) {
 
-                return reject(
+                return resolve({
 
-                    new Error(
+                    success: false,
 
+                    stdout,
+
+                    stderr:
                         stderr ||
+                        `Docker exited with code ${exitCode}`,
 
-                        `Docker exited with code ${exitCode}`
+                    exitCode,
 
-                    )
+                    executionTime:
+                        Date.now() - startTime,
 
-                );
+                });
 
             }
 

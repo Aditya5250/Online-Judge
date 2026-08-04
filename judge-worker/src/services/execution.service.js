@@ -1,4 +1,5 @@
 import languageRegistry from "../languageRegistry.js";
+import fs from "fs/promises"
 
 import {
     createTempDirectory,
@@ -40,7 +41,6 @@ export const executeSubmission = async ({
 
     const hostWorkspace = getHostWorkspace(tempDirectory);
 
-    console.log("Host Workspace:", hostWorkspace);
 
     try {
         // Write source code
@@ -49,6 +49,7 @@ export const executeSubmission = async ({
             handler.sourceFileName,
             sourceCode
         );
+
 
         console.log("Source file written.");
 
@@ -111,7 +112,8 @@ export const executeSubmission = async ({
 
         return executionResult;
     } finally {
-        // await deleteTempDirectory(tempDirectory);
-        console.log("skipping cleanup for debugging");
+        await deleteTempDirectory(tempDirectory);
+        // console.log("skipping dletion for debugging");
+        
     }
 };

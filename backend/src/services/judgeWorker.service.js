@@ -23,23 +23,31 @@ export const executeSubmission = async ({
         controller.abort();
     }, 30000);
 
-    const response = await fetch(
-        `${JUDGE_WORKER_URL}/api/execute`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                language,
-                sourceCode,
-                input,
-            }),
-            signal: controller.signal,
-        }
-    );
+    let response;
 
-    clearTimeout(timeout);
+    try {
+
+        response = await fetch(
+            `${JUDGE_WORKER_URL}/api/execute`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    language,
+                    sourceCode,
+                    input,
+                }),
+                signal: controller.signal,
+            }
+        );
+
+    } finally {
+
+        clearTimeout(timeout);
+
+    }
 
     const data = await response.json();
 
