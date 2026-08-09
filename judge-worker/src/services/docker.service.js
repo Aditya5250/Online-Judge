@@ -82,7 +82,8 @@ export const runDockerCommand = ({
         let timedOut = false;
 
 
-
+        console.log("DOCKER COMMAND:");
+        console.log("docker ",dockerArgs.join(" "));
         
 
 
