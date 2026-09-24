@@ -20,140 +20,136 @@ const FEATURES = [
 
 const AuthLayout = ({ title, subtitle, children }) => {
   return (
-    <main className="min-h-screen bg-[var(--bg-primary)]">
-      <div className="mx-auto flex min-h-screen max-w-7xl items-center justify-center p-5">
+    <main className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center p-3 sm:p-5 lg:p-6">
+      <div className="w-full max-w-5xl overflow-hidden rounded-2xl sm:rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)] shadow-2xl grid lg:grid-cols-2 my-auto">
 
-        {/* Main Card */}
-        <div className="grid w-full overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)] shadow-2xl lg:grid-cols-2">
+        {/* Left Side (Branding & Features) */}
+        <section className="hidden flex-col justify-between bg-gradient-to-br from-[#1b1b1b] via-[#222] to-[#131313] p-7 xl:p-8 lg:flex border-r border-[var(--border)]">
 
-          {/* Left Side */}
-          <section className="hidden flex-col justify-between bg-gradient-to-br from-[#1b1b1b] via-[#222] to-[#131313] p-12 lg:flex">
+          <div>
+            <div className="flex items-center gap-3">
+              <div
+                className="
+                  flex
+                  h-10
+                  w-10
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-[var(--accent)]
+                  text-lg
+                  font-bold
+                  text-black
+                  shadow-md
+                "
+              >
+                JX
+              </div>
 
-            <div>
-              <div className="mb-8 flex items-center gap-4">
+              <div>
+                <h1 className="text-2xl font-black text-white tracking-tight">
+                  JudgeX
+                </h1>
 
+                <p className="text-xs text-gray-400">
+                  Practice. Improve. Get Hired.
+                </p>
+              </div>
+            </div>
+
+            <h2 className="mt-6 text-2xl xl:text-3xl font-bold leading-snug text-white">
+              Master Coding Interviews.
+            </h2>
+
+            <p className="mt-2 text-xs xl:text-sm leading-relaxed text-gray-400">
+              Build consistency by solving problems, analyzing submissions,
+              and improving every single day.
+            </p>
+          </div>
+
+          <div className="space-y-2.5 mt-6">
+            {FEATURES.map((feature) => (
+              <div
+                key={feature.title}
+                className="
+                  flex
+                  items-center
+                  gap-3
+                  rounded-xl
+                  border
+                  border-[var(--border)]
+                  bg-white/5
+                  p-3
+                  transition-all
+                  duration-200
+                  hover:bg-white/[0.08]
+                "
+              >
+                <div className="text-[var(--accent)] shrink-0">
+                  {feature.icon}
+                </div>
+
+                <div className="min-w-0">
+                  <h3 className="text-xs font-semibold text-white truncate">
+                    {feature.title}
+                  </h3>
+
+                  <p className="text-[11px] text-gray-400 line-clamp-1">
+                    {feature.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </section>
+
+        {/* Right Side (Authentication Form) */}
+        <section className="flex items-center justify-center p-5 sm:p-7 lg:p-8 xl:p-9">
+
+          <div className="w-full max-w-md">
+
+            {/* Mobile Logo */}
+            <div className="mb-5 flex justify-center lg:hidden">
+              <div className="flex items-center gap-2.5">
                 <div
                   className="
                     flex
-                    h-14
-                    w-14
+                    h-9
+                    w-9
                     items-center
                     justify-center
-                    rounded-2xl
+                    rounded-lg
                     bg-[var(--accent)]
-                    text-xl
                     font-bold
                     text-black
+                    text-sm
                   "
                 >
                   JX
                 </div>
 
-                <div>
-                  <h1 className="text-4xl font-black text-white">
-                    JudgeX
-                  </h1>
-
-                  <p className="mt-1 text-sm text-gray-400">
-                    Practice. Improve. Get Hired.
-                  </p>
-                </div>
+                <h2 className="text-2xl font-black text-white">
+                  JudgeX
+                </h2>
               </div>
-
-              <h2 className="max-w-md text-5xl font-black leading-tight text-white">
-                Master Coding Interviews.
-              </h2>
-
-              <p className="mt-6 max-w-md text-lg leading-relaxed text-gray-400">
-                Build consistency by solving problems, analyzing submissions,
-                and improving every single day.
-              </p>
             </div>
 
-            <div className="space-y-5">
-              {FEATURES.map((feature) => (
-                <div
-                  key={feature.title}
-                  className="
-                    flex
-                    gap-4
-                    rounded-2xl
-                    border
-                    border-[var(--border)]
-                    bg-white/5
-                    p-5
-                  "
-                >
-                  <div className="text-[var(--accent)]">
-                    {feature.icon}
-                  </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              {title}
+            </h2>
 
-                  <div>
-                    <h3 className="font-semibold text-white">
-                      {feature.title}
-                    </h3>
+            <p className="mt-1 text-xs sm:text-sm text-gray-400">
+              {subtitle}
+            </p>
 
-                    <p className="mt-1 text-sm text-gray-400">
-                      {feature.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
+            <div className="mt-5">
+              {children}
             </div>
 
-          </section>
+          </div>
 
-          {/* Right Side */}
-          <section className="flex items-center justify-center p-8 lg:p-14">
-
-            <div className="w-full max-w-md">
-
-              {/* Mobile Logo */}
-              <div className="mb-10 flex justify-center lg:hidden">
-
-                <div className="flex items-center gap-3">
-
-                  <div
-                    className="
-                      flex
-                      h-12
-                      w-12
-                      items-center
-                      justify-center
-                      rounded-xl
-                      bg-[var(--accent)]
-                      font-bold
-                      text-black
-                    "
-                  >
-                    JX
-                  </div>
-
-                  <h2 className="text-3xl font-black text-white">
-                    JudgeX
-                  </h2>
-
-                </div>
-
-              </div>
-
-              <h2 className="text-4xl font-black text-white">
-                {title}
-              </h2>
-
-              <p className="mt-3 text-gray-400">
-                {subtitle}
-              </p>
-
-              <div className="mt-10">
-                {children}
-              </div>
-
-            </div>
-
-          </section>
-
-        </div>
+        </section>
 
       </div>
     </main>

@@ -17,20 +17,21 @@ const AuthButton = ({
         items-center
         justify-center
         overflow-hidden
-        rounded-2xl
+        rounded-xl
         bg-[var(--accent)]
-        px-6
-        py-3.5
+        px-5
+        py-2.5
+        text-sm
         font-semibold
         text-black
         transition-all
-        duration-300
+        duration-200
 
         hover:-translate-y-0.5
-        hover:shadow-[0_0_25px_rgba(239,211,149,0.35)]
+        hover:shadow-[0_0_20px_rgba(239,211,149,0.35)]
 
         active:translate-y-0
-        active:scale-[0.98]
+        active:scale-[0.99]
 
         disabled:cursor-not-allowed
         disabled:opacity-60

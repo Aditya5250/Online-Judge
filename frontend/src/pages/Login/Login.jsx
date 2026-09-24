@@ -9,6 +9,8 @@ import AuthInput from "../../components/auth/AuthInput";
 import AuthButton from "../../components/auth/AuthButton";
 import { getCurrentUser, loginUser } from "../../services/auth.service";
 
+import DemoAccounts from "../../components/auth/DemoAccounts";
+
 const Login = () => {
   const navigate = useNavigate();
 
@@ -37,6 +39,11 @@ const Login = () => {
         [name]: "",
       }));
     }
+  };
+
+  const handleSelectDemoAccount = ({ email, password }) => {
+    setFormData({ email, password });
+    setErrors({});
   };
 
   const validateForm = () => {
@@ -102,12 +109,13 @@ const Login = () => {
     >
       <form
         onSubmit={handleSubmit}
-        className="space-y-5"
+        className="space-y-3.5"
       >
         <AuthInput
           label="Email"
           name="email"
           type="email"
+          placeholder="you@example.com"
           value={formData.email}
           onChange={handleChange}
           error={errors.email}
@@ -118,25 +126,31 @@ const Login = () => {
           label="Password"
           name="password"
           type="password"
+          placeholder="••••••••"
           value={formData.password}
           onChange={handleChange}
           error={errors.password}
           required
         />
 
-        <AuthButton loading={loading} loadingText="Signing In...">
-          Login
-        </AuthButton>
+        <div className="pt-1">
+          <AuthButton loading={loading} loadingText="Signing In...">
+            Login
+          </AuthButton>
+        </div>
 
-        <p className="text-center text-sm text-gray-400">
+        <p className="text-center text-xs text-gray-400 pt-1">
           Don't have an account?{" "}
           <Link
             to="/register"
-            className="font-semibold text-[var(--accent)]"
+            className="font-semibold text-[var(--accent)] hover:underline"
           >
             Create Account
           </Link>
         </p>
+
+        {/* Demo Accounts Section */}
+        <DemoAccounts onSelectAccount={handleSelectDemoAccount} />
       </form>
     </AuthLayout>
   );

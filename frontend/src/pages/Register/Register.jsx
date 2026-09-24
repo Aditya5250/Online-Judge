@@ -7,6 +7,8 @@ import AuthLayout from "../../components/auth/AuthLayout";
 import AuthInput from "../../components/auth/AuthInput";
 import AuthButton from "../../components/auth/AuthButton";
 
+import DemoAccounts from "../../components/auth/DemoAccounts";
+
 const Register = () => {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -97,7 +99,7 @@ const Register = () => {
     catch(err){
 
       console.error(err);
-      toast.error(err.response?.data?.message);
+      toast.error(err.response?.data?.message || "Registration failed.");
 
     }
     finally{
@@ -112,71 +114,86 @@ const Register = () => {
     >
       <form
         onSubmit={handleSubmit}
-        className="space-y-5"
+        className="space-y-3"
       >
-        <AuthInput
-          label="Full Name"
-          name="fullName"
-          value={formData.fullName}
-          onChange={handleChange}
-          error={errors.fullName}
-          required
-        />
+        {/* Name & Username Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <AuthInput
+            label="Full Name"
+            name="fullName"
+            placeholder="John Doe"
+            value={formData.fullName}
+            onChange={handleChange}
+            error={errors.fullName}
+            required
+          />
 
-        <AuthInput
-          label="Username"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          error={errors.username}
-          required
-        />
+          <AuthInput
+            label="Username"
+            name="username"
+            placeholder="johndoe"
+            value={formData.username}
+            onChange={handleChange}
+            error={errors.username}
+            required
+          />
+        </div>
 
+        {/* Email */}
         <AuthInput
           label="Email"
           name="email"
           type="email"
+          placeholder="you@example.com"
           value={formData.email}
           onChange={handleChange}
           error={errors.email}
           required
         />
 
-        <AuthInput
-          label="Password"
-          name="password"
-          type="password"
-          value={formData.password}
-          onChange={handleChange}
-          error={errors.password}
-          required
-        />
+        {/* Password & Confirm Password Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <AuthInput
+            label="Password"
+            name="password"
+            type="password"
+            placeholder="••••••••"
+            value={formData.password}
+            onChange={handleChange}
+            error={errors.password}
+            required
+          />
 
-        <AuthInput
-          label="Confirm Password"
-          name="confirmPassword"
-          type="password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          error={errors.confirmPassword}
-          required
-        />
+          <AuthInput
+            label="Confirm Password"
+            name="confirmPassword"
+            type="password"
+            placeholder="••••••••"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            error={errors.confirmPassword}
+            required
+          />
+        </div>
 
-        <div className="pt-2">
+        <div className="pt-1">
           <AuthButton loading={loading} loadingText="Creating Account...">
             Create Account
           </AuthButton>
         </div>
 
-        <p className="text-center text-sm text-gray-400">
+        <p className="text-center text-xs text-gray-400 pt-0.5">
           Already have an account?{" "}
           <Link
             to="/login"
-            className="font-semibold text-[var(--accent)] transition hover:opacity-80"
+            className="font-semibold text-[var(--accent)] hover:underline"
           >
             Sign In
           </Link>
         </p>
+
+        {/* Demo Accounts Section */}
+        <DemoAccounts />
       </form>
     </AuthLayout>
   );
