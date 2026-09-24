@@ -46,6 +46,11 @@ const TestcasePanel = ({
       bg: "bg-blue-500/15",
       text: "text-blue-400",
     },
+
+    MEMORY_LIMIT_EXCEEDED: {
+      bg: "bg-purple-500/15",
+      text: "text-purple-400",
+    },
   };
 
 
@@ -248,9 +253,75 @@ const TestcasePanel = ({
 
                 <div className="space-y-5">
 
+                  {/* Verdict Badge for Run Code */}
+                  {(() => {
+                    const isCustomRun =
+                      activeTab === "custom" || (customInput && customInput.trim().length > 0);
+
+                    const normalizeOutput = (str = "") =>
+                      str
+                        .replace(/\r\n/g, "\n")
+                        .split("\n")
+                        .map((line) => line.trimEnd())
+                        .join("\n")
+                        .trim();
+
+                    let runVerdict = null;
+                    if (output.type === "COMPILATION_ERROR" || (output.exitCode !== 0 && output.stderr?.toLowerCase().includes("error: expected"))) {
+                      runVerdict = "COMPILATION_ERROR";
+                    } else if (output.type === "TIME_LIMIT_EXCEEDED" || output.exitCode === 124 || output.stderr?.toLowerCase().includes("time limit exceeded")) {
+                      runVerdict = "TIME_LIMIT_EXCEEDED";
+                    } else if (output.type === "MEMORY_LIMIT_EXCEEDED" || output.exitCode === 137 || output.stderr?.toLowerCase().includes("memory limit exceeded")) {
+                      runVerdict = "MEMORY_LIMIT_EXCEEDED";
+                    } else if (output.exitCode !== 0) {
+                      runVerdict = "RUNTIME_ERROR";
+                    } else if (!isCustomRun && currentCase?.expectedOutput !== undefined) {
+                      const isCorrect = normalizeOutput(output.stdout) === normalizeOutput(currentCase.expectedOutput);
+                      runVerdict = isCorrect ? "ACCEPTED" : "WRONG_ANSWER";
+                    }
+
+                    if (!runVerdict) return null;
+
+                    return (
+                      <div>
+                        <h4 className="mb-1 text-sm text-[var(--text-secondary)]">
+                          Verdict
+                        </h4>
+                        <span
+                          className={`
+                          inline-flex
+                          rounded-full
+                          px-4
+                          py-1.5
+                          text-sm
+                          font-semibold
+                          ${verdictStyles[runVerdict]?.bg ?? "bg-gray-500/15"}
+                          ${verdictStyles[runVerdict]?.text ?? "text-gray-300"}
+                          `}
+                        >
+                          {runVerdict.replaceAll("_", " ")}
+                        </span>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Show Expected Output when running against sample test case */}
+                  {activeTab !== "custom" && currentCase?.expectedOutput !== undefined && (
+                    <div>
+                      <h4 className="mb-2 text-sm font-semibold text-[var(--text-secondary)]">
+                        Expected Output
+                      </h4>
+
+                      <pre className="overflow-auto rounded-xl bg-[var(--bg-primary)] p-4 font-mono text-sm">
+                        {currentCase.expectedOutput}
+                      </pre>
+                    </div>
+                  )}
+
+                  {/* Actual Output */}
                   <div>
                     <h4 className="mb-2 text-sm font-semibold">
-                      Your Output
+                      Actual Output
                     </h4>
 
                     <pre className="overflow-auto rounded-xl bg-[var(--bg-primary)] p-4 font-mono text-sm">
@@ -270,14 +341,14 @@ const TestcasePanel = ({
                     </div>
                   )}
 
-                  <div className="flex justify-between text-xs text-[var(--text-secondary)]">
+                  <div className="flex justify-between text-xs text-[var(--text-secondary)] pt-2 border-t border-[var(--border)]">
 
                     <span>
-                      Exit Code: {output.exitCode}
+                      Exit Code: {output.exitCode ?? 0}
                     </span>
 
                     <span>
-                      {output.executionTime} ms
+                      {output.executionTime ?? 0} ms
                     </span>
 
                   </div>

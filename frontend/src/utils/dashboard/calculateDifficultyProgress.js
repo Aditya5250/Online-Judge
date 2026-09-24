@@ -1,6 +1,6 @@
 export default function calculateDifficultyProgress(
-    submissions,
-    problems
+    submissions = [],
+    problems = []
 ) {
 
     const difficulties = ["EASY", "MEDIUM", "HARD"];
@@ -8,19 +8,24 @@ export default function calculateDifficultyProgress(
     return difficulties.map((difficulty) => {
 
         const total = problems.filter(
-            problem => problem.difficulty === difficulty
+            problem => problem && problem.difficulty === difficulty
         ).length;
 
         const solved = new Set(
             submissions
                 .filter(
                     submission =>
+                        submission &&
                         submission.verdict === "ACCEPTED" &&
                         submission.problemId?.difficulty === difficulty
                 )
-                .map(
-                    submission => submission.problemId._id
-                )
+                .map((submission) => {
+                    if (!submission || !submission.problemId) return null;
+                    return typeof submission.problemId === "object"
+                        ? submission.problemId._id
+                        : submission.problemId;
+                })
+                .filter(Boolean)
         ).size;
 
         return {

@@ -54,15 +54,63 @@ const ProblemDetails = () => {
 
 
   // ============================
-  // Editor State
+  // Editor State & Draft Persistence
   // ============================
 
   const [language, setLanguage] = useState("CPP");
   const [code, setCode] = useState(EDITOR_TEMPLATES.CPP);
 
+  const getDraftKey = (pId, lang) => {
+    if (!pId || !lang) return null;
+    return `judgex:draft:${pId}:${lang.toLowerCase()}`;
+  };
+
+  const getSavedDraft = (pId, lang) => {
+    const key = getDraftKey(pId, lang);
+    if (!key) return null;
+    try {
+      return localStorage.getItem(key);
+    } catch (_) {
+      return null;
+    }
+  };
+
+  const saveDraft = (pId, lang, draftCode) => {
+    const key = getDraftKey(pId, lang);
+    if (!key || draftCode === undefined || draftCode === null) return;
+    try {
+      localStorage.setItem(key, draftCode);
+    } catch (_) {}
+  };
+
+  // Restore draft when problem is loaded or language changes
   useEffect(() => {
-    setCode(EDITOR_TEMPLATES[language] || "");
-  }, [language]);
+    if (!problem?._id) return;
+    const saved = getSavedDraft(problem._id, language);
+    if (saved !== null && saved !== undefined) {
+      setCode(saved);
+    } else {
+      setCode(EDITOR_TEMPLATES[language] || "");
+    }
+  }, [problem?._id, language]);
+
+  // Debounced auto-save of current draft
+  useEffect(() => {
+    if (!problem?._id || code === undefined || code === null) return;
+    const timer = setTimeout(() => {
+      saveDraft(problem._id, language, code);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [code, problem?._id, language]);
+
+  // Save immediately when user switches language
+  const handleLanguageChange = (newLanguage) => {
+    if (problem?._id && code !== undefined && code !== null) {
+      saveDraft(problem._id, language, code);
+    }
+    setLanguage(newLanguage);
+  };
 
   // ============================
   // Bottom Panel
@@ -280,7 +328,7 @@ const ProblemDetails = () => {
 
                 <CodeEditor
                   language={language}
-                  setLanguage={setLanguage}
+                  setLanguage={handleLanguageChange}
                   code={code}
                   setCode={setCode}
                   running={running}

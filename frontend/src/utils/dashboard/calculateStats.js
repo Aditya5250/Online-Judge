@@ -1,14 +1,19 @@
-export default function calculateStats(submissions) {
+export default function calculateStats(submissions = []) {
     const totalAttempts = submissions.length;
 
     const acceptedSubmissions = submissions.filter(
-        (submission) => submission.verdict === "ACCEPTED"
+        (submission) => submission?.verdict === "ACCEPTED"
     );
 
     const solvedProblems = new Set(
-        acceptedSubmissions.map(
-            (submission) => submission.problemId._id
-        )
+        acceptedSubmissions
+            .map((submission) => {
+                if (!submission || !submission.problemId) return null;
+                return typeof submission.problemId === "object"
+                    ? submission.problemId._id
+                    : submission.problemId;
+            })
+            .filter(Boolean)
     );
 
     const acceptanceRate =

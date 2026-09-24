@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import DifficultyBadge from "./DifficultyBadge";
 
@@ -42,12 +42,26 @@ function ProblemRow({ problem,index }) {
                 {/* Title */}
 
                 <div
-                    className="col-span-5 font-semibold"
+                    className="col-span-5 font-semibold flex items-center gap-3"
                     style={{
                         color: "var(--text-primary)",
                     }}
                 >
-                    {problem.title}
+                    <span>{problem.title}</span>
+
+                    {problem.isSolved && (
+                        <span
+                            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium"
+                            style={{
+                                background: "rgba(34, 197, 94, 0.15)",
+                                color: "#4ade80",
+                                border: "1px solid rgba(34, 197, 94, 0.3)",
+                            }}
+                        >
+                            <Check size={12} />
+                            Solved
+                        </span>
+                    )}
                 </div>
 
                 {/* Tags */}
@@ -119,16 +133,32 @@ function ProblemRow({ problem,index }) {
                     borderColor: "var(--border)",
                 }}
             >
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start gap-2">
 
-                    <h3
-                        className="font-semibold text-lg"
-                        style={{
-                            color: "var(--text-primary)",
-                        }}
-                    >
-                        {problem.title}
-                    </h3>
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <h3
+                            className="font-semibold text-lg"
+                            style={{
+                                color: "var(--text-primary)",
+                            }}
+                        >
+                            {problem.title}
+                        </h3>
+
+                        {problem.isSolved && (
+                            <span
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+                                style={{
+                                    background: "rgba(34, 197, 94, 0.15)",
+                                    color: "#4ade80",
+                                    border: "1px solid rgba(34, 197, 94, 0.3)",
+                                }}
+                            >
+                                <Check size={12} />
+                                Solved
+                            </span>
+                        )}
+                    </div>
 
                     <DifficultyBadge
                         difficulty={problem.difficulty}

@@ -8,6 +8,8 @@ import EmptyState from "../../components/problems/EmptyState";
 import ErrorState from "../../components/problems/ErrorState";
 
 import { getAllProblems } from "../../services/problem.service";
+import { getMySubmissions } from "../../services/submission.service";
+import { getUser } from "../../utils/auth";
 
 function Problems() {
 
@@ -22,10 +24,26 @@ function Problems() {
     const fetchProblems = async () => {
         try {
             setLoading(true);
+            const user = getUser();
 
-            const data = await getAllProblems();
+            const [problemsData, submissionsRes] = await Promise.all([
+                getAllProblems(),
+                user ? getMySubmissions().catch(() => ({ data: [] })) : Promise.resolve({ data: [] }),
+            ]);
 
-            setProblems(data);
+            const solvedIds = new Set(
+                (submissionsRes?.data || [])
+                    .filter((s) => s && s.verdict === "ACCEPTED" && s.problemId)
+                    .map((s) => (typeof s.problemId === "object" ? s.problemId._id : s.problemId))
+                    .filter(Boolean)
+            );
+
+            const enrichedProblems = (problemsData || []).map((p) => ({
+                ...p,
+                isSolved: solvedIds.has(p._id),
+            }));
+
+            setProblems(enrichedProblems);
             setError(false);
 
         } catch (err) {
