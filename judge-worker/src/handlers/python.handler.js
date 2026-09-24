@@ -16,7 +16,7 @@ const pythonHandler = {
 
    
     getRunCommand() {
-        return `python3 ${SOURCE_FILE_NAMES.PYTHON}`;
+        return `python3 -u ${SOURCE_FILE_NAMES.PYTHON}`;
     },
 };
 

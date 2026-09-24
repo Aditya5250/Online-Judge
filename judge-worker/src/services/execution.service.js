@@ -13,15 +13,7 @@ import {
     runInDocker,
 } from "./docker.service.js";
 
-/**
- * Execution result types.
- * These values must match the backend submission verdict constants.
- */
-const EXECUTION_TYPES = {
-    COMPILATION_ERROR: "COMPILATION_ERROR",
-    RUNTIME_ERROR: "RUNTIME_ERROR",
-    TIME_LIMIT_EXCEEDED: "TIME_LIMIT_EXCEEDED",
-};
+import { EXECUTION_TYPES } from "../constants/execution.constants.js";
 
 /**
  * Executes a code submission.
@@ -41,7 +33,6 @@ export const executeSubmission = async ({
 
     const hostWorkspace = getHostWorkspace(tempDirectory);
 
-
     try {
         // Write source code
         await writeSourceCode(
@@ -50,13 +41,11 @@ export const executeSubmission = async ({
             sourceCode
         );
 
-
         console.log("Source file written.");
 
         // Build commands
         const compileCommand = handler.getCompileCommand();
         const runCommand = handler.getRunCommand();
-
 
         /*
         ---------------------------------------------------------
@@ -71,9 +60,16 @@ export const executeSubmission = async ({
         });
 
         if (!compileResult.success) {
+            let type = EXECUTION_TYPES.COMPILATION_ERROR;
+            if (compileResult.isTimeLimitExceeded) {
+                type = EXECUTION_TYPES.TIME_LIMIT_EXCEEDED;
+            } else if (compileResult.isMemoryLimitExceeded) {
+                type = EXECUTION_TYPES.MEMORY_LIMIT_EXCEEDED;
+            }
+
             return {
                 ...compileResult,
-                type: EXECUTION_TYPES.COMPILATION_ERROR,
+                type,
             };
         }
 
@@ -92,19 +88,17 @@ export const executeSubmission = async ({
             input,
         });
 
-
         if (!executionResult.success) {
-
-            const isTimeLimitExceeded =
-                executionResult.stderr
-                    ?.toLowerCase()
-                    .includes("time limit exceeded");
+            let type = EXECUTION_TYPES.RUNTIME_ERROR;
+            if (executionResult.isTimeLimitExceeded) {
+                type = EXECUTION_TYPES.TIME_LIMIT_EXCEEDED;
+            } else if (executionResult.isMemoryLimitExceeded) {
+                type = EXECUTION_TYPES.MEMORY_LIMIT_EXCEEDED;
+            }
 
             return {
                 ...executionResult,
-                type: isTimeLimitExceeded
-                    ? EXECUTION_TYPES.TIME_LIMIT_EXCEEDED
-                    : EXECUTION_TYPES.RUNTIME_ERROR,
+                type,
             };
         }
 
