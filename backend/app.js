@@ -22,13 +22,15 @@ const allowedOrigins = [
 app.use(
     cors({
         origin: (origin, callback) => {
-           if(!origin){
+           if (!origin) {
                 return callback(null, true);
            }
-           if(allowedOrigins.includes(origin)){
+           if (allowedOrigins.includes(origin)) {
                 return callback(null, true);
            }
-           return callback(new Error(`Origin ${origin} not allowed by CORS`));
+           const corsError = new Error(`Origin ${origin} not allowed by CORS`);
+           corsError.statusCode = 403;
+           return callback(corsError);
         },
         credentials: true,
     })
@@ -60,5 +62,36 @@ app.use("/api/ai", aiRoutes);
 
 // Admin Dashboard Route
 app.use("/api/admin/dashboard", adminDashboardRoute);
+
+// Centralized Express Error Handling Middleware
+app.use((err, req, res, next) => {
+    // Log detailed diagnostics server-side
+    console.error("[Backend Error]", {
+        message: err.message,
+        stack: err.stack,
+        path: req.path,
+        method: req.method,
+    });
+
+    const isProduction = process.env.NODE_ENV === "production";
+
+    // Handle CORS error cleanly without leaking stack trace
+    if (err.statusCode === 403 || (err.message && err.message.includes("not allowed by CORS"))) {
+        return res.status(403).json({
+            success: false,
+            message: "CORS request blocked: Origin not allowed",
+        });
+    }
+
+    const statusCode = err.statusCode || (typeof err.status === "number" ? err.status : 500);
+
+    return res.status(statusCode).json({
+        success: false,
+        message: isProduction && statusCode === 500
+            ? "Internal server error"
+            : (err.message || "Internal server error"),
+        ...(isProduction ? {} : { stack: err.stack }),
+    });
+});
 
 export default app;

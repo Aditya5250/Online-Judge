@@ -47,11 +47,8 @@ export const signup = async (req, res) => {
         });
         
     }
-    catch (err) { //catching any errors that occur during the user creation process and sending a 500 status code with the error message
-        res.status(500).json({
-            success: false,
-            message: err.message,
-        });
+    catch (err) {
+        return next(err);
     }
 
 }
@@ -101,10 +98,7 @@ export const login = async (req, res) => {
         })
 
     } catch (err) {
-        res.status(500).json({
-            success: false,
-            message: err.message,
-        });
+        return next(err);
     }
 
 

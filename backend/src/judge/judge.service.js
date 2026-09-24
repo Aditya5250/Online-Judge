@@ -12,29 +12,32 @@ const runAgainstTestCases = async({
     language,
     testCases,
 })=>{
-    let executionTime=0;
+    let executionTime = 0;
     let executionResult;
-    for(const testCase of testCases){
-        executionResult=await executeSubmission({
+    let passedTestCases = 0;
+    const totalTestCases = testCases.length;
+
+    for (const testCase of testCases) {
+        executionResult = await executeSubmission({
             language,
             sourceCode,
-            input:testCase.input,
+            input: testCase.input,
         });
 
-
-        executionTime = executionResult.executionTime;
+        executionTime = executionResult.executionTime || 0;
         /*
         ----------------------------------------------------------------------
         | Execution Failed
         ----------------------------------------------------------------------
         */
         
-        if(!executionResult.success){
+        if (!executionResult.success) {
             return {
-                passed:false,
-                verdict:executionResult.type??SUBMISSION_VERDICT.RUNTIME_ERROR,
-                executionTime:executionResult.executionTime,
-
+                passed: false,
+                verdict: executionResult.type ?? SUBMISSION_VERDICT.RUNTIME_ERROR,
+                executionTime,
+                passedTestCases,
+                totalTestCases,
             };
         }
 
@@ -43,28 +46,32 @@ const runAgainstTestCases = async({
         | Compare Output
         ----------------------------------------------------------------------
         */
-       
         
-        const isCorrect =compareOutput(
-            
+        const isCorrect = compareOutput(
             executionResult.stdout,
             testCase.expectedOutput
         );
 
-        if(!isCorrect){
+        if (!isCorrect) {
             return {
-                passed:false,
-                verdict:SUBMISSION_VERDICT.WRONG_ANSWER,
-                executionTime:executionResult.executionTime,
+                passed: false,
+                verdict: SUBMISSION_VERDICT.WRONG_ANSWER,
+                executionTime,
+                passedTestCases,
+                totalTestCases,
             };
         }
+
+        passedTestCases++;
     }
 
     // All test cases passed
     return {
-        passed:true,
-        verdict:SUBMISSION_VERDICT.ACCEPTED,
-        executionTime:executionResult.executionTime,
+        passed: true,
+        verdict: SUBMISSION_VERDICT.ACCEPTED,
+        executionTime: executionResult?.executionTime || 0,
+        passedTestCases,
+        totalTestCases,
     };
 }
 
@@ -121,22 +128,28 @@ export const judgeSubmission = async (submissionId) => { // Responsibities: 1. F
 
     submission.executionTime = result.executionTime;
     submission.verdict = result.verdict;
+    submission.passedTestCases = result.passedTestCases;
+    submission.totalTestCases = result.totalTestCases;
 
-    //update submission status
-    const failedVerdicts =[SUBMISSION_VERDICT.COMPILATION_ERROR,SUBMISSION_VERDICT.RUNTIME_ERROR,SUBMISSION_VERDICT.TIME_LIMIT_EXCEEDED];
+    // Update submission status
+    const failedVerdicts = [
+        SUBMISSION_VERDICT.COMPILATION_ERROR,
+        SUBMISSION_VERDICT.RUNTIME_ERROR,
+        SUBMISSION_VERDICT.TIME_LIMIT_EXCEEDED,
+        SUBMISSION_VERDICT.MEMORY_LIMIT_EXCEEDED,
+    ];
 
-    submission.status=failedVerdicts.includes(submission.verdict)?SUBMISSION_STATUS.FAILED:SUBMISSION_STATUS.COMPLETED;
+    submission.status = failedVerdicts.includes(submission.verdict)
+        ? SUBMISSION_STATUS.FAILED
+        : SUBMISSION_STATUS.COMPLETED;
 
     await submission.save();
 
     return {
-
         status: submission.status,
-
         verdict: submission.verdict,
-
         executionTime: submission.executionTime,
-
+        passedTestCases: submission.passedTestCases,
+        totalTestCases: submission.totalTestCases,
     };
-
 };
