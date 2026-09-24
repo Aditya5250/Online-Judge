@@ -110,8 +110,9 @@ export const runDockerCommand = ({
             }
         });
 
-        if (input) {
-            child.stdin.write(input);
+        if (input !== undefined && input !== null && input !== "") {
+            const formattedInput = input.endsWith("\n") ? input : `${input}\n`;
+            child.stdin.write(formattedInput);
         }
         child.stdin.end();
 

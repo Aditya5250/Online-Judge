@@ -16,7 +16,7 @@ const javaHandler = {
 
   
     getRunCommand() {
-        return "java -Xmx256m -Xms64m -XX:+UseSerialGC Main";
+        return "java -Xmx192m -Xms64m -XX:+UseSerialGC Main";
     },
 };
 

@@ -49,8 +49,8 @@ export const LANGUAGE_CONFIG = {
     [SUPPORTED_LANGUAGES.JAVA]: {
         timeout: 5000,
         compileTimeout: 10000,
-        memoryLimit: "512m", // Headroom for JVM runtime
-        compileMemoryLimit: "512m",
+        memoryLimit: "384m", // Fits comfortably inside 912MB EC2 host
+        compileMemoryLimit: "384m",
         cpuLimit: "1",
     },
     [SUPPORTED_LANGUAGES.PYTHON]: {
