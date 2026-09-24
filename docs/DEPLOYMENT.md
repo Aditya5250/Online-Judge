@@ -7,143 +7,147 @@ Current deployment consists of:
 | Component | Deployment |
 |---|---|
 | Frontend | Vercel |
-| Backend | Dockerized service on AWS EC2 |
-| Judge Worker | Dockerized service on AWS EC2 |
+| Backend | Dockerized service on AWS EC2 (:5000) |
+| Judge Worker | Dockerized service on AWS EC2 (:7000) |
 | Container images | Amazon ECR |
-| Execution | Docker on EC2 |
+| Execution | Docker Daemon on EC2 via `/var/run/docker.sock` |
 
-## 2. Image Flow
+## 2. Image Flow & Rollout Policy
+
+> [!IMPORTANT]
+> **No Automatic Rollout**: Pushing an image to Amazon ECR does **NOT** automatically update or restart the running container on AWS EC2. Deployments require an explicit manual rollout sequence on the EC2 host.
 
 ```text
-Developer machine
+Developer Machine
        │
-       │ docker build
+       │ 1. docker build -t judgex-judge-worker ./judge-worker
+       │ 2. docker tag judgex-judge-worker:latest <account-id>.dkr.ecr.<region>.amazonaws.com/judgex-judge-worker:latest
        ▼
-Local Docker image
+Local Docker Image
        │
-       │ docker tag
-       ▼
-ECR repository
-       │
-       │ docker push
+       │ 3. docker push <account-id>.dkr.ecr.<region>.amazonaws.com/judgex-judge-worker:latest
        ▼
 Amazon ECR
        │
-       │ EC2 docker login
-       │ docker compose pull
+       │ 4. SSH to EC2 & authenticate with ECR
+       │ 5. docker compose pull judge-worker
        ▼
-AWS EC2
+AWS EC2 Host
        │
-       │ docker compose up -d
+       │ 6. docker compose up -d --force-recreate judge-worker
        ▼
-Running service
+Running Judge Worker Container
 ```
 
-## 3. ECR Authentication
+## 3. Mandatory Runner Images (Pre-Pulling on EC2)
 
-On EC2, authenticate Docker to the regional ECR registry.
+The Judge Worker spawns ephemeral sandbox containers on the EC2 Docker daemon.
 
-The registry must use the correct AWS ECR hostname form:
+> [!WARNING]
+> If a runner image is **not** cached locally on the EC2 Docker daemon when a submission arrives, Docker attempts to download the image layers from Docker Hub on the fly. Because layer downloads take longer than the 5-second execution timeout, the job will fail with an artificial **Time Limit Exceeded** (TLE) and cancel the pull.
 
-```text
-<account-id>.dkr.ecr.<region>.amazonaws.com
+Before serving traffic, you **MUST** ensure all supported runner images are pre-pulled on the EC2 host:
+
+```bash
+docker pull gcc:latest
+docker pull python:3.11
+docker pull eclipse-temurin:17
 ```
 
-The project encountered an important deployment typo during development: using an incorrect hostname form caused the initial push flow to fail. The corrected `amazonaws.com` hostname worked.
+Verify cached images with:
 
-## 4. Pulling the Worker
+```bash
+docker images | grep -E "gcc|python|eclipse-temurin"
+```
 
-The verified EC2 operation was:
+## 4. ECR Authentication on EC2
 
+On the EC2 host, authenticate Docker to your regional ECR registry:
+
+```bash
+aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <account-id>.dkr.ecr.<region>.amazonaws.com
+```
+
+Ensure the registry URL uses the correct format: `<account-id>.dkr.ecr.<region>.amazonaws.com`.
+
+## 5. Pulling & Recreating the Worker
+
+### Step 1: Pull new worker image from ECR
 ```bash
 docker compose pull judge-worker
 ```
 
-The expected result was that the ECR image was successfully pulled.
-
-## 5. Recreating the Worker
-
-After pulling:
-
+### Step 2: Stop and recreate the running container
 ```bash
 docker compose up -d --force-recreate judge-worker
 ```
 
-Then:
-
+### Step 3: Check container status
 ```bash
 docker compose ps judge-worker
 ```
 
-The worker should show as running.
-
-## 6. Logs
-
-To inspect the worker:
-
+### Step 4: Health Check Verification
+Verify the worker is responsive:
 ```bash
-docker compose logs --tail=50 judge-worker
+curl http://localhost:7000/api/health
+```
+Expected response:
+```json
+{"status":"healthy","service":"judge-worker"}
 ```
 
-For live logs:
+## 6. Logs & Diagnostics
 
+To inspect live worker logs:
 ```bash
 docker compose logs -f judge-worker
 ```
 
-A healthy worker should show its startup message and execution logs.
-
-## 7. Image Verification
-
-The deployed image was verified using both:
-
+To view the last 100 log lines:
 ```bash
-docker inspect <container> --format '{{.Image}}'
+docker compose logs --tail=100 judge-worker
 ```
 
-and:
+## 7. Image Identifier Verification
+
+To prove that the EC2 container is running the exact image pushed to ECR:
 
 ```bash
-docker image inspect <image> --format '{{.Id}}'
+docker inspect judgex-judge-worker --format '{{.Image}}'
+docker image inspect <account-id>.dkr.ecr.<region>.amazonaws.com/judgex-judge-worker:latest --format '{{.Id}}'
 ```
 
-The resulting image identifiers matched during the deployment validation.
+Both SHA256 identifiers must match.
 
-This is useful for proving that EC2 is running the intended ECR image.
-
-## 8. Frontend Deployment
+## 8. Frontend Deployment (Vercel)
 
 The frontend is deployed through Vercel.
 
-After deployment, the frontend must point to the correct deployed backend URL/configuration.
+1. Ensure environment variables in Vercel point to the EC2 backend:
+   ```text
+   VITE_API_BASE_URL=https://api.judgex.live/api
+   ```
+2. Deploy via git push or Vercel CLI.
 
-A complete smoke test should verify:
+## 9. Verification Smoke Test Checklist
 
-1. Open the live frontend.
-2. Open a problem.
-3. Enter C++ code.
-4. Run the code.
-5. Confirm the result.
-6. Trigger a compilation error.
-7. Trigger a runtime error.
-8. Trigger a timeout.
-9. Test network isolation.
+After each deployment, test all three languages through the live UI:
 
-## 9. Production Deployment Checklist
+- [ ] C++: Accepted (e.g. standard Two Sum / Hello World)
+- [ ] C++: Compilation Error (syntax error)
+- [ ] C++: Runtime Error (division by zero)
+- [ ] C++: Time Limit Exceeded (infinite loop)
+- [ ] Python: Simple execution (`print("Hello")`) — must not timeout
+- [ ] Python: Accepted solution
+- [ ] Python: Time Limit Exceeded (`while True: pass`)
+- [ ] Python: Memory Limit Exceeded (large memory allocation)
+- [ ] Java: Simple execution (`Main` with `System.out.println`) — must not timeout
+- [ ] Java: Accepted solution
+- [ ] Java: Compilation Error (`javac` failure)
+- [ ] Java: Time Limit Exceeded (infinite loop)
+- [ ] Draft persistence: Edit C++, switch to Python, switch back — code preserved
+- [ ] Solved state: Accepted submission marks problem as Solved on list and dashboard
+- [ ] Run Code: Displays Expected vs Actual output and Verdict badge
+- [ ] Security: Verify no orphan containers left with `docker ps`
 
-Before public release:
-
-- [ ] Production environment variables configured
-- [ ] Secrets not committed to Git
-- [ ] ECR repositories private
-- [ ] EC2 security group reviewed
-- [ ] Docker daemon not publicly exposed
-- [ ] Worker logs available
-- [ ] Workspace cleanup verified
-- [ ] Resource limits verified
-- [ ] Timeout verified
-- [ ] Network isolation verified
-- [ ] Output limits verified
-- [ ] Backup/recovery plan documented
-- [ ] Monitoring/alerting configured
-- [ ] Rollback procedure documented
