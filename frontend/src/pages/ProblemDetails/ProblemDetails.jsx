@@ -120,6 +120,7 @@ const ProblemDetails = () => {
   const [output, setOutput] = useState(null);
   const [submissionResult, setSubmissionResult] = useState(null);
   const [outputMode, setOutputMode] = useState("run");
+  const [lastRunSource, setLastRunSource] = useState("testcase");
 
   // ============================
   // Execution State
@@ -156,14 +157,17 @@ const ProblemDetails = () => {
       return;
     }
 
+    const isCustom = activeTab === "custom";
+    setLastRunSource(isCustom ? "custom" : "testcase");
+
     setActiveTab("output");
     setOutputMode("run");
     setSubmissionResult(null);
 
 
-    //we will use custom input if custom tab is active, otherwise we will use the first test case
+    //we will use custom input if custom tab is active, otherwise we will use the selected test case
     const input =
-      activeTab === "custom"
+      isCustom
         ? customInput
         : testCases[selectedCase]?.input || "";
 
@@ -369,6 +373,7 @@ const ProblemDetails = () => {
                   outputMode={outputMode}
                   selectedCase={selectedCase}
                   setSelectedCase={setSelectedCase}
+                  lastRunSource={lastRunSource}
                 />
 
               </Panel>

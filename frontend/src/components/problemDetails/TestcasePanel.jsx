@@ -12,6 +12,7 @@ const TestcasePanel = ({
   outputMode,
   selectedCase,
   setSelectedCase,
+  lastRunSource = "testcase",
 }) => {
 
   useEffect(() => {
@@ -255,8 +256,7 @@ const TestcasePanel = ({
 
                   {/* Verdict Badge for Run Code */}
                   {(() => {
-                    const isCustomRun =
-                      activeTab === "custom" || (customInput && customInput.trim().length > 0);
+                    const isCustomRun = lastRunSource === "custom";
 
                     const normalizeOutput = (str = "") =>
                       str
@@ -305,8 +305,21 @@ const TestcasePanel = ({
                     );
                   })()}
 
-                  {/* Show Expected Output when running against sample test case */}
-                  {activeTab !== "custom" && currentCase?.expectedOutput !== undefined && (
+                  {/* Show Custom Input if this was a custom run */}
+                  {lastRunSource === "custom" && customInput ? (
+                    <div>
+                      <h4 className="mb-2 text-sm font-semibold text-[var(--text-secondary)]">
+                        Custom Input
+                      </h4>
+
+                      <pre className="overflow-auto rounded-xl bg-[var(--bg-primary)] p-4 font-mono text-sm">
+                        {customInput}
+                      </pre>
+                    </div>
+                  ) : null}
+
+                  {/* Show Expected Output ONLY when running against a sample test case */}
+                  {lastRunSource !== "custom" && currentCase?.expectedOutput !== undefined && (
                     <div>
                       <h4 className="mb-2 text-sm font-semibold text-[var(--text-secondary)]">
                         Expected Output
